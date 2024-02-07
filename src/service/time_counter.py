@@ -11,7 +11,7 @@ def decrease_second_remaining(dSecond : float = 1/15):
     second_remaining -= dSecond
     if second_remaining < 0:
         second_remaining = 0
-    four_digit_disp.on_display()
+    four_digit_disp.on_display(second_remaining)
 
 def is_time_up() -> bool:
     return second_remaining == 0
