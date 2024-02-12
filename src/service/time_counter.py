@@ -1,17 +1,14 @@
 from src.hardware import four_digit_disp
 
-second_remaining = 0
+time_use = 0
 
-def set_second_remaining(second : float):
+def reset():
     global second_remaining
-    second_remaining = second
+    second_remaining = 0
 
-def decrease_second_remaining(dSecond : float = 1/15):
+def count_tick_time(dSecond : float = 1/15):
     global second_remaining
-    second_remaining -= dSecond
+    second_remaining += dSecond
     if second_remaining < 0:
         second_remaining = 0
     four_digit_disp.on_display(second_remaining)
-
-def is_time_up() -> bool:
-    return second_remaining == 0

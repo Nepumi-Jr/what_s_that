@@ -1,25 +1,19 @@
-from src.service import time_counter, morse
+from src.service import time_counter
 from src import game_settings
 from src.util import log
 from time import sleep
 
 FRAME_RATE = 15
 
-def test():
-    print(f"Setting {game_settings.sample}")
 
 def main():
 
-    time_counter.set_second_remaining(game_settings.init_time)
-    morse.set_word("CAT")
-    log.debug(">>>>",morse.curWordMorse)
-    while not time_counter.is_time_up():
-
-        morse.cur_morse_signal()
+    time_counter.reset()
+    time_limit = game_settings.number_of_stage * 10 * 60 # 10 minute per stage
+    while time_counter.time_use < time_limit:
 
         # decrease the time, disp and wait
-        morse.reload_morse(1 / FRAME_RATE)
-        time_counter.decrease_second_remaining( 1 / FRAME_RATE)
+        time_counter.count_tick_time( 1 / FRAME_RATE)
         sleep(1 / FRAME_RATE)
     
     print("Time's up!")
