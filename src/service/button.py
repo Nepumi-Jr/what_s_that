@@ -10,13 +10,14 @@ timeDelay = {}
 isCalled = {}
 
 
-def assign_pin(buttonInd : int, pin : Pin):
-    button_input.assign_pin(buttonInd, pin)
+def assign_pin(buttonInd : int, pin : int):
+    b_in.assign_pin(buttonInd, pin)
     stateButton[buttonInd] = 0
+    timeDelay[buttonInd] = 0
     buttons.append(buttonInd)
 
 def is_first_press(buttonInd : int) -> bool:
-    if stateButton[buttonInd] == 1:
+    if stateButton[buttonInd] == 1 and not isCalled[buttonInd]:
         isCalled[buttonInd] = True
         return True
     return False
@@ -26,7 +27,7 @@ def is_hold(buttonInd : int) -> bool:
 
 # state will handle here
 # to see description of state, see GoodNote กู
-def clock_tick():
+def clock_tick(dSec : float):
     for button in buttons:
         state = stateButton[button]
 
@@ -47,3 +48,6 @@ def clock_tick():
         elif state == 3: # hold
             if not b_in.is_press(button):
                 stateButton[button] = 2
+        
+        if timeDelay[button] > 0:
+            timeDelay[button] = max(timeDelay[button] - dSec, 0)
