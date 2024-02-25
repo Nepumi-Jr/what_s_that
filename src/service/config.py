@@ -1,11 +1,8 @@
-import configparser
-from enum import Enum
-
-class DeviceType(Enum):
+class DeviceType():
     PLAY = "play"
     TRANSLATE = "translate"
 
-class LCDDeviceType(Enum):
+class LCDDeviceType():
     SH1106 = "SH1106"
     SSD1306 = "SSD1306"
 
@@ -56,8 +53,7 @@ _isInit = False
 def init():
     global _config
 
-    configIni = configparser.ConfigParser()
-    configIni.read('config.ini')
+    configIni = configRead('config.ini')
 
     _config.device = Device()
     _config.device.mode = _device_type_from_string(configIni['device']['mode'])
@@ -77,9 +73,47 @@ def init():
     _config.digitDisp.data = int(configIni['digitDisp']['data'])
     _config.digitDisp.clock = int(configIni['digitDisp']['clock'])
 
+def configRead(path : str) -> dict:
+    # configparser not working in micropython :(
+    rawText = ""
+    try:
+        with open(path, 'r') as file:
+            rawText = file.read()
+    except Exception as e:
+        print("Error reading config file: ", e)
+        raise Exception("Error reading config file: ", e)
+    
+    config = {}
+    header = None
+    for l in rawText.split('\n'):
+        line = l.strip()
+        if '#' in line:
+            line = line.split('#')[0]
+        
+        if "[" in line and "]" in line:
+            header = line[line.index("[")+1:line.index("]")]
+        
+        elif "=" in line:
+            chunk = line.split("=")
+            key = chunk[0].strip()
+            value = "=".join(chunk[1:]).strip()
+            if header == None:
+                raise Exception("No header found in config file")
+
+            if header not in config:
+                config[header] = {}
+
+            config[header][key] = value
+    return config
+
+
 def get_config() -> Config:
     global _isInit
     if not _isInit:
         init()
         _isInit = True
     return _config
+
+
+if __name__ == "__main__":
+    print(DeviceType.PLAY)
