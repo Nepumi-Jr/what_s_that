@@ -1,0 +1,21 @@
+[device]
+mode = # mode of operation (play, transalate)
+
+# pin button
+[button]
+button1 = 
+button2 =
+button3 = 
+button4 = #incase of 4 buttons
+
+# pin i2c lcd
+[lcd]
+device = # device Type (SH1106, SSD1306)
+data = 
+clock =
+
+# pin i2c 4-digit display
+[digitDisp]
+data =
+clock =
+
