@@ -1,4 +1,5 @@
-from src.hardware import comTechOLED as jor
+from src.hardware import observer
+from src.hardware import translator
 
 def jorOLED():
-    jor.observer()
+    observer.teamName()
