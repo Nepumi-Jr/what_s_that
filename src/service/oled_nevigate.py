@@ -1,12 +1,7 @@
-from src.hardware import lcd_SH1106 as sh1106
-from src.hardware import lcd_SSD1306 as ssd1306
-from src.service.config import get_config, LCDDeviceType
+from src.service.config import get_config
+from src.service import oled_lcd as oled
 
 config = get_config()
-if config.lcd.device == LCDDeviceType.SH1106:
-    oled = sh1106
-else:
-    oled = ssd1306
 
 isFourButton = config.button.button4 != None
 useGraphic = [None, None, None, None]
@@ -24,19 +19,24 @@ class Icon: # 16x8 pixel
     CONFIRM = [0xC003, 0x8021, 0x0060, 0x08C0, 0x0D80, 0x0700, 0x8201, 0xC003]
     BACK = [0xC003, 0x80E1, 0x00C0, 0x04A0, 0x0410, 0x0220, 0x81C1, 0xC003]
 
+    W_ALPHA = [0xE7E7, 0xE7E7, 0xE7E7, 0xE667, 0xE427, 0xE187, 0xE7E7, 0xFFFF]
+    A_ALPHA = [0xFE7F, 0xFC3F, 0xF99F, 0xF81F, 0xF99F, 0xF99F, 0xF99F, 0xFFFF]
+    I_ALPHA = [0xFC3F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFC3F, 0xFFFF]
+    T_ALPHA = [0xF81F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFE7F, 0xFFFF]
+
 
 def reset():
     oled.rect(0, oled.height() - 11, oled.width() - 1, oled.height() - 1)
     useGraphic = [None, None, None, None]
 
-def _getStartPos(index :int):
-    xCenter = (2 * index + 1) * oled.width() // ((4 if isFourButton else 3) * 2)
+def _getStartPos(index :int, ForceFourButton = False):
+    xCenter = (2 * index + 1) * oled.width() // ((4 if (isFourButton or ForceFourButton) else 3) * 2)
     xStart = xCenter - Icon.width // 2
     yStart = oled.height() - 10
 
     return xStart, yStart
 
-def replaceIcon(index :int , icon :Icon):
+def setButtonIcon(index :int , icon :Icon):
     useGraphic[index] = icon
     xStart, yStart = _getStartPos(index)
 
@@ -44,13 +44,26 @@ def replaceIcon(index :int , icon :Icon):
     for y in range(Icon.height):
         for x in range(Icon.width):
             if (icon[y] >> (Icon.width - x - 1)) & 1:
-                oled.pixel(xStart + x, yStart + y, 1)
+                oled.pixel(xStart + x, yStart + y)
             else:
-                oled.pixel(xStart + x, yStart + y, 0)
+                oled.delPixel(xStart + x, yStart + y)
+    
+    oled.show()
+
+def setWait():
+    waitIcons = [Icon.W_ALPHA, Icon.A_ALPHA, Icon.I_ALPHA, Icon.T_ALPHA]
+    for i, icon in enumerate(waitIcons):
+        useGraphic[i] = icon
+        xStart, yStart = _getStartPos(i, True)
+        for y in range(Icon.height):
+            for x in range(Icon.width):
+                if (icon[y] >> (Icon.width - x - 1)) & 1:
+                    oled.pixel(xStart + x, yStart + y)
+                else:
+                    oled.delPixel(xStart + x, yStart + y)
     oled.show()
 
 def clearIcon(index :int):
     useGraphic[index] = None
     xStart, yStart = _getStartPos(index)
-    oled.rect(xStart, yStart, xStart + Icon.width, yStart + Icon.height)
-    oled.show()
+    oled.rect(xStart, yStart, xStart + Icon.width, yStart + Icon.height, True)
