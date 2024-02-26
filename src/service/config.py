@@ -25,6 +25,8 @@ def _lcd_device_type_from_string(lcdDeviceType:str):
 
 class Device:
     mode:DeviceType = None
+    uart_tx:int = None
+    uart_rx:int = None
 
 class Button:
     button1:int = None
@@ -57,6 +59,8 @@ def init():
 
     _config.device = Device()
     _config.device.mode = _device_type_from_string(configIni['device']['mode'])
+    _config.device.uart_tx = int(configIni['device']['uart_tx'])
+    _config.device.uart_rx = int(configIni['device']['uart_rx'])
 
     _config.button = Button()
     _config.button.button1 = int(configIni['button']['button1'])
@@ -70,8 +74,8 @@ def init():
     _config.lcd.clock = int(configIni['lcd']['clock'])
 
     _config.digitDisp = DigitDisp()
-    _config.digitDisp.data = int(configIni['digitDisp']['data'])
-    _config.digitDisp.clock = int(configIni['digitDisp']['clock'])
+    _config.digitDisp.data = int(configIni['digitDisp']['data']) if configIni['digitDisp']['data'] != "" else None
+    _config.digitDisp.clock = int(configIni['digitDisp']['clock']) if configIni['digitDisp']['clock'] != "" else None
 
 def configRead(path : str) -> dict:
     # configparser not working in micropython :(

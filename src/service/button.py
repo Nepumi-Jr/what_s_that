@@ -1,4 +1,5 @@
 from machine import Pin
+from src.service import config
 from src.hardware import button_input as b_in
 
 HOLD_SEC = 2
@@ -9,12 +10,21 @@ stateButton = {}
 timeDelay = {}
 isCalled = {}
 
-
 def assign_pin(buttonInd : int, pin : int):
     b_in.assign_pin(buttonInd, pin)
     stateButton[buttonInd] = 0
     timeDelay[buttonInd] = 0
     buttons.append(buttonInd)
+
+config = config.get_config()
+assign_pin(0, config.button.button1)
+assign_pin(1, config.button.button2)
+assign_pin(2, config.button.button3)
+if config.button.button4 != None:
+    assign_pin(3, config.button.button4)
+
+def get_button_number() -> int:
+    return len(buttons)
 
 def is_first_press(buttonInd : int) -> bool:
     if stateButton[buttonInd] == 1 and not isCalled[buttonInd]:

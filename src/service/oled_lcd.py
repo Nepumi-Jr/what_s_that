@@ -29,17 +29,27 @@ def CenterY(includingNav = True):
 def show():
     oled.show()
 
-def text(textStr, x, y, reload = True):
-    oled.text(textStr, x, y)
-    if reload:
-        show()
+def _checkTextOverflow(textStr, x = 0):
+    if x < 0 or x > oled.width():
+        Exception("Text overflow")
+    if len(textStr) * 6 + (len(textStr) - 1) * 2 + x > oled.width():
+        Exception("Text overflow")
 
-def textAlign(textStr, x, y, align : TextAlign, reload = True): #! Warning : about text overflow
+def text(textStr, x, y, align : TextAlign = TextAlign.LEFT, reload = False):
     if align == TextAlign.CENTER:
         x -= (len(textStr) * 6 + (len(textStr) - 1) * 2) // 2
     elif align == TextAlign.RIGHT:
         x -= (len(textStr) * 6 + (len(textStr) - 1) * 2)
-    text(textStr, x, y, reload)
+
+    _checkTextOverflow(textStr, x)
+    oled.text(textStr, x, y)
+    if reload:
+        show()
+
+def textInLine(textStr, x, lineNumber, align : TextAlign = TextAlign.LEFT, reload = False):
+    assert lineNumber >= 0 and lineNumber < 5
+    delRect(0, lineNumber * 10, oled.width(), lineNumber * 10 + 9, False)
+    text(textStr, x, lineNumber * 10, align, reload)
 
 def clear(reload = True):
     oled.delRect(0, 0, oled.width() - 1, oled.height() - 11)

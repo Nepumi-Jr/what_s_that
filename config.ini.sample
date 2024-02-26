@@ -1,5 +1,7 @@
 [device]
 mode = # mode of operation (play, transalate)
+uart_tx = 17
+uart_rx = 16
 
 # pin button
 [button]
@@ -18,4 +20,3 @@ clock =
 [digitDisp]
 data =
 clock =
-

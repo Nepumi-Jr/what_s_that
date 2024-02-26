@@ -1,9 +1,10 @@
 from src.service.config import get_config
+from src.service import button
 from src.service import oled_lcd as oled
 
 config = get_config()
 
-isFourButton = config.button.button4 != None
+isFourButton = button.get_button_number() == 4
 useGraphic = [None, None, None, None]
 
 # the Art (icon) start here
@@ -49,6 +50,10 @@ def setButtonIcon(index :int , icon :Icon):
                 oled.delPixel(xStart + x, yStart + y)
     
     oled.show()
+
+def setAllButtonIcon(icon :Icon):
+    for i in range(4 if isFourButton else 3):
+        setButtonIcon(i, icon)
 
 def setWait():
     waitIcons = [Icon.W_ALPHA, Icon.A_ALPHA, Icon.I_ALPHA, Icon.T_ALPHA]
