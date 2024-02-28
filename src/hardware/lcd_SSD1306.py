@@ -14,7 +14,7 @@ def text(text, x, y):
     oled.text(text, x, y)
 
 def pixel(x, y):
-    oled.pixel(x, y)
+    oled.pixel(x, y, 1)
 
 def rect(x1, y1, x2, y2):
     if x1 > x2:
