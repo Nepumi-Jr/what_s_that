@@ -38,6 +38,7 @@ def _getStartPos(index :int, ForceFourButton = False):
     return xStart, yStart
 
 def setButtonIcon(index :int , icon :Icon):
+    '''เซ็ต Icon ที่ ตำแหน่ง index ของปุ่ม 0-3 ให้เป็น icon ที่กำหนด'''
     useGraphic[index] = icon
     xStart, yStart = _getStartPos(index)
 
@@ -52,10 +53,12 @@ def setButtonIcon(index :int , icon :Icon):
     oled.show()
 
 def setAllButtonIcon(icon :Icon):
+    '''เซ็ต Icon ทั้ง 4 ปุ่ม ให้เป็น icon ที่กำหนด'''
     for i in range(4 if isFourButton else 3):
         setButtonIcon(i, icon)
 
 def setWait():
+    '''เซ็ต Icon ทั้ง 4 ปุ่ม ให้เป็น W A I T ที่แสดงสถานะรอ'''
     waitIcons = [Icon.W_ALPHA, Icon.A_ALPHA, Icon.I_ALPHA, Icon.T_ALPHA]
     for i, icon in enumerate(waitIcons):
         useGraphic[i] = icon
@@ -69,6 +72,7 @@ def setWait():
     oled.show()
 
 def clearIcon(index :int):
+    '''ลบ Icon ที่ ตำแหน่ง index ของปุ่ม 0-3'''
     useGraphic[index] = None
     xStart, yStart = _getStartPos(index)
     oled.rect(xStart, yStart, xStart + Icon.width, yStart + Icon.height, True)
