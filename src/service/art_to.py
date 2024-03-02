@@ -109,46 +109,22 @@ class canvas:
                     numByte = 0
         return int32Array
 
-def genTest():
-    c = canvas()
-    c.triangle(0, 0, 63, 47, 0, 47)
-    return c
+def extractType2(type, n_type1, n_type2):
+    """ถอด type ออกมาเป็น 2 ตัว (type จาก 0 ถึง n_type - 1)"""
+    return (type // n_type2, type % n_type2)
 
-#* keep in mind that top left is (0, 0) and bottom right is (63, 47)
+def extractType3(type, n_type1, n_type2, n_type3):
+    """ถอด type ออกมาเป็น 3 ตัว (type จาก 0 ถึง n_type - 1)"""
+    return (type // (n_type2 * n_type3), (type // n_type3) % n_type2, type % n_type3)
 
-#* easy
+def extractType4(type, n_type1, n_type2, n_type3, n_type4):
+    """ถอด type ออกมาเป็น 4 ตัว (type จาก 0 ถึง n_type - 1)"""
+    return (type // (n_type2 * n_type3 * n_type4), (type // (n_type3 * n_type4)) % n_type2, (type // n_type4) % n_type3, type % n_type4)
 
-def e_worker_meme() -> canvas:
-    c = canvas()
-    # left-Down triangle
-    
-    c.triangle(0, c.bottom, c.right, c.top, c.right, c.bottom)
+def extractType5(type, n_type1, n_type2, n_type3, n_type4, n_type5):
+    """ถอด type ออกมาเป็น 5 ตัว (type จาก 0 ถึง n_type - 1)"""
+    return (type // (n_type2 * n_type3 * n_type4 * n_type5), (type // (n_type3 * n_type4 * n_type5)) % n_type2, (type // (n_type4 * n_type5)) % n_type3, (type // n_type5) % n_type4, type % n_type5)
 
-    # roundStone
-    r = 8
-    dm = int(sqrt(2) * r / 2)
-    cx = c.centerX
-    cy = c.centerY
-    posStone = randint(1, 3)
-    if posStone == 2:
-        cx = c.right - 7
-        cy = c.top + 7
-    elif posStone == 3:
-        cx = c.left + 7
-        cy = c.bottom - 7
-    
-    cx -= dm
-    cy -= dm
-    c.circle(cx, cy, r)
-
-    # sun
-    c.circle(c.left, c.top, 10)
-
-    # flip?
-    if randint(0, 1) == 1:
-        c.flip(horizontal = True)
-    
-    return c
-
-def getEasy() -> canvas:
-    return e_worker_meme()
+if __name__ == "__main__":
+    for i in range(24):
+        print(extractType3(i, 2, 3, 4))
