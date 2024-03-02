@@ -1,13 +1,13 @@
-from src.service.art_to import canvas, extractType3
+from src.service.art_canvas import Canvas, extractType3
 from math import sqrt
 
 n_type = 3 * 2 * 2
 
 #* keep in mind that top left is (0, 0) and bottom right is (63, 47)
-def get(type : int) -> canvas:
+def get(type : int) -> Canvas:
     posStone, isSun, isFlip = extractType3(type, 3, 2, 2)
 
-    c = canvas()
+    c = Canvas()
     # left-Down triangle
     
     c.triangle(0, c.bottom, c.right, c.top, c.right, c.bottom)
