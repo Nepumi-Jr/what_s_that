@@ -4,10 +4,11 @@ from src import game_settings
 from src.util import log
 from src.service import art_to as art
 from time import sleep, time_ns
+from src.service.scene_nevigate import SCENE as scene
 
 FRAME_RATE = 15
 
-def main():
+def main(): # menu
     oled_lcd.clear()
     oled_nevigate.reset()
     oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.CONFIRM)
@@ -17,7 +18,7 @@ def main():
     pTime = time_ns()
     while True:
         if(button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2)):
-            syncing()
+            return scene.TRANSLATOR_SYNC
         
         button.clock_tick(1 / FRAME_RATE)
         cTime = time_ns()
