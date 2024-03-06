@@ -2,9 +2,9 @@ from src.service import time_counter, button, oled_lcd, oled_nevigate
 from src.service.oled_lcd import TextAlign
 from src import game_settings
 from src.util import log
-from src.service import art_to as art
+from src.service import art_set as art
 from time import sleep, time_ns
-from src.service.scene_nevigate import SCENE as scene
+from src.service.scene import SCENE as scene
 
 FRAME_RATE = 15
 
@@ -55,7 +55,7 @@ def translator_main_game():
     oled_lcd.text(f"Symbol {symbol + 1}#", 128, 0, TextAlign.RIGHT)
     oled_lcd.text("<", 0, 25,TextAlign.LEFT)
     '''แก้เป๋นรูป[symbol]'''
-    c = art.getEasy()
+    c = art.getRandomCanvas()
     oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 10, c.width, c.height -10, True)
     oled_lcd.text(">", 128, 25,TextAlign.RIGHT)
     oled_lcd.show()
@@ -68,7 +68,7 @@ def translator_main_game():
             oled_lcd.text(f"{mockUpCode[symbol]}", 10, 25,TextAlign.LEFT)
             oled_lcd.delRect(58, 10, c.width, c.height -10)
             '''แก้เป๋นรูป[symbol]'''
-            c = art.getEasy()
+            c = art.getRandomCanvas()
             oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 10, c.width, c.height -10, True)
         if(button.is_first_press(2)):
             symbol = min(symbol+1, 4)
@@ -76,7 +76,7 @@ def translator_main_game():
             oled_lcd.text(f"{mockUpCode[symbol]}", 10, 25,TextAlign.LEFT)
             oled_lcd.delRect(58, 10, c.width, c.height -10)
             '''แก้เป๋นรูป[symbol]'''
-            c = art.getEasy()
+            c = art.getRandomCanvas()
             oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 10, c.width, c.height -10, True)
         oled_lcd.delRect(40, 0, 128, 10)
         oled_lcd.text(f"Symbol {symbol + 1}#", 128, 0, TextAlign.RIGHT)
