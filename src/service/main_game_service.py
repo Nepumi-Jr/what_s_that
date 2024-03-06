@@ -9,6 +9,8 @@ save_pass_code = 0 # in int
 cur_diff = None # in Difficulty
 time_limit = 0.0 # in second
 
+cur_seed = 0
+
 real_code_symbol = [] # list of CodeAndSymbol
 fake_code_symbol = [] # list of list of CodeAndSymbol
 
@@ -36,6 +38,9 @@ class CodeAndSymbol:
     
     def __str__(self):
         return f"Code: {self.code}, Name: {self.name}, Type: {self.type}"
+    
+    def __hash__(self) -> int:
+        return hash((self.code, self.name, self.type))
 
 
 def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
@@ -53,6 +58,12 @@ def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
         save_pass_code = pass_code
         save_cur_time += wrong_penalty
         return OnSubmitStatus.WRONG
+
+def set_seed(seed : int = -1):
+    if seed == -1:
+        seed = random.randint(0, 999999999)
+    random.seed(seed)
+    return seed
 
 def reset():
     global cur_round, save_cur_time, save_pass_code, real_code_symbol, fake_code_symbol
@@ -127,6 +138,14 @@ def get_canvas_from_CodeAndSymbol(cas : CodeAndSymbol):
         return art.easy_symbols[cas.name].getCanvasFromType(cas.type)
     else:
         return art.hard_symbols[cas.name].getCanvasFromType(cas.type)
+
+def get_hash_cur_game_setting():
+    hh = hash("Meow")
+    for r_ind in range(n_round):
+        for sym in fake_code_symbol[r_ind]:
+            hh ^= hash(sym)
+    
+    return hh
 
 if __name__ == "__main__":
     reset_easy()
