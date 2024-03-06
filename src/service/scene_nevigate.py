@@ -3,10 +3,12 @@ from src.scene.translator_main_game import syncing
 from src.service.scene import SCENE
 
 def main():
-    cur_scene = SCENE.MENU
+    # start with...
+    cur_scene = SCENE.SYNC
+
     while True:
         if cur_scene == SCENE.MENU:
-            cur_scene = main_game.main() # TODO:
+            cur_scene = sync.main() # TODO:
         elif cur_scene == SCENE.MAIN_GAME:
             cur_scene = main_game.main()
         elif cur_scene == SCENE.SYNC:
@@ -22,6 +24,9 @@ def main():
         
         elif cur_scene == SCENE.TRANSLATOR_SYNC:
             cur_scene = syncing()
+
+        elif cur_scene == SCENE.EXIT:
+            break
 
         else:
             raise ValueError(f"Invalid scene: {cur_scene}")

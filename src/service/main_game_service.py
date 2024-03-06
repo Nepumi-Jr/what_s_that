@@ -54,15 +54,29 @@ def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
         save_cur_time += wrong_penalty
         return OnSubmitStatus.WRONG
 
-def reset_easy():
-    global n_round, cur_round, save_cur_time, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff
-
-    n_round = 2
+def reset():
+    global cur_round, save_cur_time, save_pass_code, real_code_symbol, fake_code_symbol
     cur_round = 0
     save_cur_time = 0.0 # in second
     save_pass_code = 0 # in int
+
+    real_code_symbol.clear()
+    fake_code_symbol.clear()
+
+
+
+def reset_easy():
+    global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit
+
+    reset()
+
+    n_round = 2
     wrong_penalty = 60 * 2.0 # 2 minute
-    time_limit = 60 * 10.0 * 3 # 10 minute per round
+
+    #! TODO : Remove this
+    wrong_penalty = 60 * 15.0 # 15 minute
+
+    time_limit = 60 * 10.0 * n_round # 10 minute per round
     cur_diff = Difficulty.EASY
 
     #* generate symbol
@@ -110,9 +124,9 @@ def reset_hard():
 
 def get_canvas_from_CodeAndSymbol(cas : CodeAndSymbol):
     if cur_diff == Difficulty.EASY:
-        return art.easy_symbols[cas.name].get(cas.type)
+        return art.easy_symbols[cas.name].getCanvasFromType(cas.type)
     else:
-        return art.hard_symbols[cas.name].get(cas.type)
+        return art.hard_symbols[cas.name].getCanvasFromType(cas.type)
 
 if __name__ == "__main__":
     reset_easy()

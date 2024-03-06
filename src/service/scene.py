@@ -1,4 +1,5 @@
 class SCENE:
+    EXIT = -1
     MENU = 0
     MAIN_GAME = 1
     SYNC = 2

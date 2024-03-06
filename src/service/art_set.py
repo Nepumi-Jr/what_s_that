@@ -1,5 +1,7 @@
 # import art here
 from src.service.arts import pushing_boulder, flower
+from src.service.art_canvas import Canvas
+from random import randint, choice
 
 class Symbol:
     def __init__(self, symbolName : str, n_type : int, getCanvasFromType):
@@ -15,3 +17,12 @@ easy_symbols = {
 
 hard_symbols = {
 }
+
+def getRandomCanvas() -> Canvas:
+    """เอาไว้ทดสอบ เฉย ๆ"""
+    if randint(0, 1) == 0 or True:
+        symbol = choice(list(easy_symbols.values()))
+    else:
+        listSet = list(hard_symbols.keys())
+    
+    return symbol.getCanvasFromType(randint(0, symbol.n_type - 1))

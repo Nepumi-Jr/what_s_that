@@ -2,9 +2,9 @@ from src.hardware import four_digit_disp
 
 time_use = 0
 
-def reset():
+def reset(initTime:float = 0):
     global time_use
-    time_use = 0
+    time_use = initTime
 
 def count_tick_time(dSecond : float = 1/15):
     global time_use
