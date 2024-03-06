@@ -31,13 +31,16 @@ def main():
             else:
                 raise ValueError(f"Invalid scene: {cur_scene}")
     else:
+        cur_scene = SCENE.TRANSLATOR_MENU
         while True:
-            if cur_scene == SCENE.MENU:
+            if cur_scene == SCENE.TRANSLATOR_MENU:
                 cur_scene = translate_scene.main() # TODO:
             elif cur_scene == SCENE.TRANSLATOR_SYNC:
                 cur_scene = translate_scene.syncing()
             elif cur_scene == SCENE.TRANSLATOR_MAIN_GAME:
                 cur_scene = translate_scene.translator_main_game()
+            elif cur_scene == SCENE.TRANSLATOR_RESULT:
+                cur_scene = translate_scene.result()
             elif cur_scene == SCENE.EXIT:
                 break
 

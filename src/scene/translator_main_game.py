@@ -14,6 +14,11 @@ def main(): # menu
     oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.CONFIRM)
     oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.CONFIRM)
     oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.CONFIRM)
+    
+    oled_lcd.text("Translator", 64, 10, TextAlign.CENTER)
+    oled_lcd.text(">Play<", 64, 20, TextAlign.CENTER)
+    oled_lcd.text("(Press to start)", 64, 30, TextAlign.CENTER)
+    oled_lcd.show()
         
     pTime = time_ns()
     while True:
@@ -29,15 +34,12 @@ def main(): # menu
 def syncing():
     oled_lcd.clear()
     oled_nevigate.reset()
-    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.W_ALPHA)
-    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.A_ALPHA)
-    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.I_ALPHA)
-    #oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.T_ALPHA)
+    oled_nevigate.setWait()
     '''Something form UART'''
     pTime = time_ns()
     while True:
         if(button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2)):
-            translator_main_game()
+            return scene.TRANSLATOR_MAIN_GAME
         button.clock_tick(1 / FRAME_RATE)
         cTime = time_ns()
         dTime = cTime - pTime
@@ -46,6 +48,7 @@ def syncing():
     
 def translator_main_game():
     symbol = 0
+    mockUpCode=[1234,5678,1011,8956,5522]
     oled_lcd.clear()
     oled_nevigate.reset()
     oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.LEFT)
@@ -54,13 +57,14 @@ def translator_main_game():
     oled_lcd.text("Easy", 0, 0, TextAlign.LEFT)
     oled_lcd.text(f"Symbol {symbol + 1}#", 128, 0, TextAlign.RIGHT)
     oled_lcd.text("<", 0, 25,TextAlign.LEFT)
+    'แก้เป็น Code array'
+    oled_lcd.text(f"{mockUpCode[symbol]}", 10, 25,TextAlign.LEFT)
     '''แก้เป๋นรูป[symbol]'''
     c = art.getRandomCanvas()
     oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 10, c.width, c.height -10, True)
     oled_lcd.text(">", 128, 25,TextAlign.RIGHT)
     oled_lcd.show()
     pTime = time_ns()
-    mockUpCode=[1234,5678,1011,8956,5522]
     while True:
         if(button.is_first_press(0)):
             symbol = max(symbol-1, 0)
@@ -86,4 +90,14 @@ def translator_main_game():
         dTime = cTime - pTime
         pTime = cTime
         sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
+    
+    '''หมดเวลา / observer เสร็จ (รอรับผ่าน uart)'''
+    return scene.TRANSLATOR_RESULT
+
+def result():
+    oled_lcd.clear()
+    oled_nevigate.reset()
+    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.CORRECT)
+    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.CORRECT)
+    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.CORRECT)
         
