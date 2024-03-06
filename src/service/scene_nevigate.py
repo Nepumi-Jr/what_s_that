@@ -1,25 +1,12 @@
 from src.scene import main_game, sync
 from src.scene.translator_main_game import syncing
-
-class SCENE:
-    MENU = 0
-    MAIN_GAME = 1
-    SYNC = 2
-
-    CORRECT = 3
-    WRONG = 4
-    WIN = 5
-    TIME_UP = 6
-
-    # Translator
-    TRANSLATOR_SYNC = 7
-
+from src.service.scene import SCENE
 
 def main():
     cur_scene = SCENE.MENU
     while True:
         if cur_scene == SCENE.MENU:
-            cur_scene = main_game.main()
+            cur_scene = main_game.main() # TODO:
         elif cur_scene == SCENE.MAIN_GAME:
             cur_scene = main_game.main()
         elif cur_scene == SCENE.SYNC:
