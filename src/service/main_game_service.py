@@ -1,10 +1,13 @@
 import random
+from src.util import random as urandom
 from src.service import art_set as art
 
 n_round = 3
 cur_round = 0
 save_cur_time = 0.0 # in second
 save_pass_code = 0 # in int
+cur_diff = None # in Difficulty
+time_limit = 0.0 # in second
 
 real_code_symbol = [] # list of CodeAndSymbol
 fake_code_symbol = [] # list of list of CodeAndSymbol
@@ -17,11 +20,22 @@ class OnSubmitStatus:
     WRONG = 1
     WIN = 2
 
+class Difficulty:
+    EASY = "Easy"
+    NORMAL = "Normal"
+    HARD = "Hard"
+    SILENT = "Silent"
+
+    # Custom (in future)
+
 class CodeAndSymbol:
     def __init__(self, code : int, name : str, type : int):
         self.code = code
         self.name = name
         self.type = type
+    
+    def __str__(self):
+        return f"Code: {self.code}, Name: {self.name}, Type: {self.type}"
 
 
 def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
@@ -41,13 +55,15 @@ def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
         return OnSubmitStatus.WRONG
 
 def reset_easy():
-    global n_round, cur_round, save_cur_time, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty
+    global n_round, cur_round, save_cur_time, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff
 
     n_round = 2
     cur_round = 0
     save_cur_time = 0.0 # in second
     save_pass_code = 0 # in int
-    wrong_penalty = 60 * 2.0
+    wrong_penalty = 60 * 2.0 # 2 minute
+    time_limit = 60 * 10.0 * 3 # 10 minute per round
+    cur_diff = Difficulty.EASY
 
     #* generate symbol
     #? for easy
@@ -55,29 +71,21 @@ def reset_easy():
     #? fake symbol : use 3 symbol within 2 set of symbol (6 symbol) for each round
     for r_ind in range(n_round):
         symbols_set = list(art.easy_symbols.keys())
-        print(symbols_set)
-        shuffle(symbols_set)
+        urandom.shuffle(symbols_set)
 
         real_set = symbols_set.pop()
         fake_set = symbols_set.pop()
 
-        # TODO: use util random
-        allCodes = []
-        while allCodes < 3 * 2:
-            c = random.randint(0, 9999)
-            if c not in allCodes:
-                allCodes.append(c)
+        allCodes = urandom.sample_int(0, 9999, 10)
 
-        real_set_ids = [ CodeAndSymbol(allCodes.pop(), real_set, i) for i in range(art.easy_symbols[real_set].n_type)]
-        shuffle(real_set_ids)
-        real_code_symbol.append(real_set_ids.pop())
+        real_type_set = urandom.sample_int(0, art.easy_symbols[real_set].n_type, 3)
+        real_code_symbol.append(CodeAndSymbol(allCodes[0], real_set, real_type_set[0]))
 
-        fake_set_ids =  [ CodeAndSymbol(allCodes.pop(), fake_set, i) for i in range(art.easy_symbols[fake_set].n_type)]
-        shuffle(fake_set_ids)
-        fake_code_symbol_mix = [real_code_symbol[-1]]
-        fake_code_symbol_mix.extend(fake_set_ids[:3])
-        fake_code_symbol_mix.extend(real_set_ids[:2])
-        shuffle(fake_code_symbol_mix)
+        fake_type_set =  urandom.sample_int(0, art.easy_symbols[fake_set].n_type, 3)
+        fake_code_symbol_mix = [CodeAndSymbol(allCodes[0], real_set, real_type_set[0])]
+        fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[1 + i], fake_set, fake_type_set[i]) for i in range(3)])
+        fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[3 + i], real_set, real_type_set[i]) for i in range(1, 3)])
+        urandom.shuffle(fake_code_symbol_mix)
         fake_code_symbol.append(fake_code_symbol_mix)
 
 
@@ -100,7 +108,17 @@ def reset_hard():
 
     pass
 
+def get_canvas_from_CodeAndSymbol(cas : CodeAndSymbol):
+    if cur_diff == Difficulty.EASY:
+        return art.easy_symbols[cas.name].get(cas.type)
+    else:
+        return art.hard_symbols[cas.name].get(cas.type)
+
 if __name__ == "__main__":
     reset_easy()
-    print(real_code_symbol)
-    print(fake_code_symbol)
+    for r in range(n_round):
+        print(f"Round {r+1}")
+        print("Real :", real_code_symbol[r])
+        for f in fake_code_symbol[r]:
+            print("fake :", f)
+        print()

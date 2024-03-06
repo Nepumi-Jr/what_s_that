@@ -12,3 +12,6 @@ easy_symbols = {
     "pushing_boulder" : Symbol("pushing_boulder", pushing_boulder.n_type, pushing_boulder.get),
     "flower" : Symbol("flower", flower.n_type, flower.get),
 }
+
+hard_symbols = {
+}

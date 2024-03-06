@@ -1,8 +1,11 @@
 from src.service import time_counter, button, oled_lcd, oled_nevigate
 from src import game_settings
 from src.util import log
-from service import art_set as art
+from src.service import art_set as art
+from src.service import main_game_service as game_service
+from src.service.scene_nevigate import SCENE as scene
 from time import sleep, time_ns
+
 
 
 FRAME_RATE = 15
@@ -56,15 +59,18 @@ def main():
     global FRAME_RATE, cur_code, cur_ind
     
     oled_lcd.clear()
-    oled_lcd.textInLine("Rd. 2/3", 0, 0)
-    oled_lcd.textInLine("Normal", 0, 1)
+    oled_lcd.textInLine(f"Rd. {game_service.cur_round}/{game_service.n_round}", 0, 0)
+    oled_lcd.textInLine(game_service.cur_diff, 0, 1)
     
     oled_nevigate.reset()
     oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.LEFT)
     oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.RIGHT)
     
-    c = art.getEasy()
+    c = game_service.get_canvas_from_CodeAndSymbol(game_service.real_code_symbol[game_service.cur_round])
     oled_lcd.insertPixelImage(c.convert_to_int32_array(), 60, 0, c.width, c.height, True)
+
+    # for Debug
+    print("Don't peak :D ", game_service.real_code_symbol[game_service.cur_round].code)
 
     update_code()
 
@@ -74,8 +80,17 @@ def main():
     while time_counter.time_use < time_limit:
         if(button.is_first_press(0)): # up
             if cur_ind == 4:
-                #TODO: submit
-                return
+                pass_code = int("".join([str(i) for i in cur_code]))
+                cur_time = time_counter.time_use
+
+                result_check = game_service.on_submit_pass(pass_code, cur_time)
+
+                if result_check == game_service.OnSubmitStatus.CORRECT:
+                    return scene.CORRECT
+                elif result_check == game_service.OnSubmitStatus.WRONG:
+                    return scene.WRONG
+                else:
+                    return scene.WIN
             else:
                 cur_code[cur_ind] = (cur_code[cur_ind] + 1) % 10
                 update_code()
@@ -104,7 +119,10 @@ def main():
         pTime = cTime
         sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
     
-    print("Time's up!")
+    game_service.save_cur_time = time_counter.time_use
+    return scene.TIME_UP
+
+
 
 if __name__ == "__main__":
     main()
