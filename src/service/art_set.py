@@ -1,5 +1,5 @@
 # import art here
-from src.service.arts import pushing_boulder, flower
+from src.service.arts import pushing_boulder, flower, eight_segment
 from src.service.art_canvas import Canvas
 from random import randint, choice
 
@@ -13,6 +13,7 @@ class Symbol:
 easy_symbols = {
     "pushing_boulder" : Symbol("pushing_boulder", pushing_boulder.n_type, pushing_boulder.get),
     "flower" : Symbol("flower", flower.n_type, flower.get),
+    "8-seg" : Symbol("8-Seg", eight_segment.n_type, eight_segment.get)
 }
 
 hard_symbols = {

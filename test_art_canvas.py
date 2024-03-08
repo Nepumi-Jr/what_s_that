@@ -3,7 +3,7 @@ import tkinter as tk
 import random
 from src.service.art_canvas import Canvas
 # Here what you are gonna cook
-from src.service.arts.flower import get, n_type
+from src.service.arts.eight_segment import get, n_type
 
 
 def display_selected_pixels(selected_type):
