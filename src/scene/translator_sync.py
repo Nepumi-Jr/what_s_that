@@ -39,36 +39,38 @@ def main():
     oled_nav.setWait()
 
     showStatusText(f"Drawing symbol.")
-    ob_seed = main_game_service.set_seed()
-    #TODO : split difficulty
-    main_game_service.reset_easy()
 
     showStatusText(f"Waiting resp.")
     while True:
         # TODO : add timeout
         read_data = uart.read()
-        if read_data.startswith("seed"):
-            recv_hash = read_data.split(" ")[1].strip()
-            if recv_hash == str(hash(ob_seed)):
-                showStatusText(f"Seed matched.")
-                break
-            else:
-                showError(f"Not match :(")
-                uart.send("not mann")
-                pressAnyToReturn()
-                return scene.MENU
+        print("รอรับ")
+        if read_data is not None and read_data.startswith("seed"):
+            print("รับมาละ", read_data)
+            recv_seed = int(read_data.split(" ")[1].strip())
+            trans_seed = main_game_service.set_seed(recv_seed)
+            #split DIFF
+            main_game_service.reset_easy()
+            break
         sleep(TIME_FRAME)
     
-    uart.send("mann")
+    hashed = main_game_service.get_hash_cur_game_setting()
+    uart.send(f"hash {hashed}")
+    print(hashed)
     showStatusText(f"Syncing...")
-
+    print("ส่งละ")
     while True:
+        # TODO : add timeout
         read_data = uart.read()
-        if read_data.strip() == "starto":
-            return scene.MAIN_GAME
+        if read_data is not None and read_data.startswith("mann"):
+            uart.send(f"starto")
+            print("รับละไปละ")
+            return scene.TRANSLATOR_MAIN_GAME
+        elif read_data is not None and read_data.startswith("not mann"):
+            print("ไม่รับ")
+            pressAnyToReturn()
+            return scene.TRANSLATOR_MENU
         sleep(TIME_FRAME)
-
-
-
+        
 if __name__ == "__main__":
     main()
