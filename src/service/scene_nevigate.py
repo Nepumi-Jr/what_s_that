@@ -1,4 +1,4 @@
-from src.scene import main_game, sync
+from src.scene import main_game, sync, menu
 from src.scene import translator_main_game as translate_scene
 from src.service.scene import SCENE
 from src.service import config
@@ -6,17 +6,19 @@ from src.service import config
 
 def main():
     # start with...
-    cur_scene = SCENE.SYNC
+    cur_scene = SCENE.MENU
 
     conf = config.get_config()
     if conf.device.mode == config.DeviceType.PLAY:
         while True:
             if cur_scene == SCENE.MENU:
-                cur_scene = sync.main() # TODO:
-            elif cur_scene == SCENE.MAIN_GAME:
-                cur_scene = main_game.main()
+                cur_scene = menu.main()
+            elif cur_scene == SCENE.DIFFICULTY_SELECT:
+                cur_scene = menu.difficulty_select()
             elif cur_scene == SCENE.SYNC:
                 cur_scene = sync.main()
+            elif cur_scene == SCENE.MAIN_GAME:
+                cur_scene = main_game.main()
             elif cur_scene == SCENE.CORRECT:
                 cur_scene = main_game.on_correct()
             elif cur_scene == SCENE.WRONG:

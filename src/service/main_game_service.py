@@ -123,6 +123,7 @@ def _reset_easy():
 
 
 def _reset_normal():
+    global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit
 
     e_n_round = 2
     h_n_round = 1
@@ -178,6 +179,7 @@ def _reset_normal():
         fake_code_symbol.append(fake_code_symbol_mix)
 
 def _reset_hard():
+    global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit
 
     n_round = 3
     wrong_penalty = 60 * 4.0 # 4 minute
@@ -226,10 +228,12 @@ def reset_game():
         _reset_easy()
 
 def get_canvas_from_CodeAndSymbol(cas : CodeAndSymbol):
-    if cur_diff == Difficulty.EASY:
+    if cas.name in art.easy_symbols:
         return art.easy_symbols[cas.name].getCanvasFromType(cas.type)
-    else:
+    elif cas.name in art.hard_symbols:
         return art.hard_symbols[cas.name].getCanvasFromType(cas.type)
+    
+    assert False, "Unknown symbol name : " + cas.name
 
 def get_hash_cur_game_setting():
     hh = hash("Meow")

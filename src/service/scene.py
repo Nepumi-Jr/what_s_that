@@ -3,6 +3,7 @@ class SCENE:
     MENU = 0
     MAIN_GAME = 1
     SYNC = 2
+    DIFFICULTY_SELECT = 11
 
     CORRECT = 3
     WRONG = 4
