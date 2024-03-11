@@ -27,6 +27,7 @@ class Device:
     mode:DeviceType = None
     uart_tx:int = None
     uart_rx:int = None
+    skip_sync:bool = False
 
 class Button:
     button1:int = None
@@ -58,6 +59,7 @@ def init():
     configIni = configRead('config.ini')
 
     _config.device = Device()
+    _config.device.skip_sync = configIni['device']['skip_sync'].lower() == "true"
     _config.device.mode = _device_type_from_string(configIni['device']['mode'])
     _config.device.uart_tx = int(configIni['device']['uart_tx'])
     _config.device.uart_rx = int(configIni['device']['uart_rx'])

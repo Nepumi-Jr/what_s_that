@@ -2,6 +2,7 @@
 mode = # mode of operation (play, transalate)
 uart_tx = 17
 uart_rx = 16
+skip_sync = true
 
 # pin button
 [button]
