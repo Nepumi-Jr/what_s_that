@@ -1,4 +1,4 @@
-from src.service import time_counter, button, oled_lcd, oled_nevigate
+from src.service import time_counter, button, oled_lcd, oled_nevigate, score_board
 from src import game_settings
 from src.util import log
 from src.service import art_set as art
@@ -180,18 +180,86 @@ def on_win():
 
     timeMin = int(game_service.save_cur_time / 60)
     timeSec = int(game_service.save_cur_time % 60)
-    oled_lcd.text(f"{timeMin:02d}:{timeSec:02d}", oled_lcd.CenterX(), 40, oled_lcd.TextAlign.CENTER)
+    oled_lcd.text(f"{timeMin:02d}:{timeSec:02d}", oled_lcd.width() - 1, 40, oled_lcd.TextAlign.CENTER)
     oled_lcd.text("min.", 125, 40, oled_lcd.TextAlign.RIGHT, reload=True)
 
     four_digit_disp.on_display(game_service.save_cur_time, True)
     while True:
         if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
-            return scene.MENU # TODO: Scoreboard or smth
+            if score_board.is_new_record(game_service.cur_diff, game_service.save_cur_time):
+                return scene.NEW_RECORD
+            return scene.MENU
+        button.clock_tick(1/FRAME_RATE)
+        sleep(1/FRAME_RATE)
+
+def new_record():
+    oled_lcd.clear()
+
+    timeMin = int(game_service.save_cur_time / 60)
+    timeSec = int(game_service.save_cur_time % 60)
+    oled_lcd.textInLine(game_service.cur_diff, oled_lcd.width() - 1, 0, oled_lcd.TextAlign.RIGHT)
+    oled_lcd.text(f"{timeMin:02d}:{timeSec:02d}", 0, 0)
+    oled_lcd.textInLine("<cool pic here>", oled_lcd.CenterX(), 2, oled_lcd.TextAlign.CENTER)
+    oled_lcd.textInLine("Team : ", 0, 4, reload=True)
+
+    oled_nevigate.reset()
+    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.UP)
+    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.DOWN)
+    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.LEFT)
+    oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.RIGHT)
+
+    ALPHABET = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?"
+    cur_team_ind = [0 for i in range(5)]
+    cur_pos_ind = 0
+    is_move_to_end = False
+    
+    def update_team_name():
+        nonlocal is_move_to_end
+        oled_lcd.delRect(59, 36, 127, 52)
+        for i in range(5):
+            oled_lcd.text(ALPHABET[cur_team_ind[i]], 58 + 10 * i,  40)
+        oled_lcd.insertPixelImage(UP_ARROW, 1 + 58 + 10 * cur_pos_ind, 36, 6, 3)
+        oled_lcd.insertPixelImage(DOWN_ARROW, 1 + 58 + 10 * cur_pos_ind, 49, 6, 3)
+        oled_lcd.show()
+
+        if cur_pos_ind == 4:
+            if not is_move_to_end:
+                oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.CONFIRM)
+                is_move_to_end = True
+        else:
+            if is_move_to_end:
+                oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.RIGHT)
+                is_move_to_end = False
+    update_team_name()
+
+    while True:
+        if button.is_first_press(0) or button.is_hold(0):
+            cur_team_ind[cur_pos_ind] = (cur_team_ind[cur_pos_ind] + 1) % len(ALPHABET)
+            update_team_name()
+        elif button.is_first_press(1) or button.is_hold(1):
+            cur_team_ind[cur_pos_ind] = (cur_team_ind[cur_pos_ind] - 1) % len(ALPHABET)
+            update_team_name()
+        elif button.is_first_press(2):
+            cur_pos_ind = max(cur_pos_ind - 1, 0)
+            update_team_name()
+        elif button.is_first_press(3):
+            if cur_pos_ind == 4:
+                team_name = "".join([ALPHABET[i] for i in cur_team_ind]).strip()
+                score_board.add_new_record(game_service.cur_diff, team_name, game_service.save_cur_time)
+                #TODO : Return to score board...
+                return scene.MENU
+            cur_pos_ind = min(cur_pos_ind + 1, 4)
+            update_team_name()
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
 
 
 
+
 if __name__ == "__main__":
-    main()
+    game_service.cur_diff = game_service.Difficulty.EASY
+    game_service.save_cur_time = 2 * 60 + 42
+    new_record()
+
+
 

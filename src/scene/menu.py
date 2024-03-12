@@ -3,6 +3,7 @@ from src.service import main_game_service as game_service
 from src.service.main_game_service import Difficulty as diff
 from src.service.scene import SCENE as scene
 from src.service.oled_lcd import TextAlign
+from src.service import score_board as score_service
 from time import sleep, time_ns
 
 FRAME_RATE = 30
@@ -42,7 +43,7 @@ def main():
             if menu_selected_ind == 0:
                 return scene.DIFFICULTY_SELECT
             else:
-                return scene.MENU # TODO: scoreboard
+                return scene.SCORE_BOARD
         
         
         button.clock_tick(1 / FRAME_RATE)
@@ -89,6 +90,44 @@ def difficulty_select():
             print("Set difficulty to", game_service.cur_diff)
             return scene.SYNC
         
+        
+        button.clock_tick(1 / FRAME_RATE)
+        cTime = time_ns()
+        dTime = cTime - pTime
+        pTime = cTime
+        sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
+
+def score_board():
+    oled_lcd.clear()
+    oled_nevigate.reset()
+    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.LEFT)
+    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.RIGHT)
+    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.BACK)
+
+    oled_lcd.textInLine("Scoreboard", oled_lcd.CenterX(), 0, TextAlign.CENTER)
+    diff_index = 0
+    diffs = [diff.EASY, diff.NORMAL, diff.HARD, diff.SILENT]
+    def reload_score_diff():
+        oled_lcd.textInLine(f"< {diffs[diff_index]} >", oled_lcd.CenterX(), 1, TextAlign.CENTER)
+        record = score_service.get_score_board_data(diffs[diff_index])
+        for  i , (name, time_use) in enumerate(record):
+            time_min = time_use // 60
+            time_sec = time_use % 60
+            oled_lcd.textInLine(f"{time_min:02}:{time_sec:02}", oled_lcd.width() - 1, 2 + i, TextAlign.RIGHT)
+            oled_lcd.text(name, 0, (2 + i) * 10)
+        oled_lcd.show()
+
+    reload_score_diff()
+    pTime = time_ns()
+    while True:
+        if(button.is_first_press(0)):
+            diff_index = (diff_index - 1) % len(diffs)
+            reload_score_diff()
+        elif (button.is_first_press(1)):
+            diff_index = (diff_index + 1) % len(diffs)
+            reload_score_diff()
+        elif (button.is_first_press(2)):
+            return scene.MENU
         
         button.clock_tick(1 / FRAME_RATE)
         cTime = time_ns()

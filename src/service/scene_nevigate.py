@@ -13,6 +13,8 @@ def main():
         while True:
             if cur_scene == SCENE.MENU:
                 cur_scene = menu.main()
+            elif cur_scene == SCENE.SCORE_BOARD:
+                cur_scene = menu.score_board()
             elif cur_scene == SCENE.DIFFICULTY_SELECT:
                 cur_scene = menu.difficulty_select()
             elif cur_scene == SCENE.SYNC:
@@ -27,6 +29,8 @@ def main():
                 cur_scene = main_game.on_win()
             elif cur_scene == SCENE.TIME_UP:
                 cur_scene = main_game.on_time_up()
+            elif cur_scene == SCENE.NEW_RECORD:
+                cur_scene = main_game.new_record()
             elif cur_scene == SCENE.EXIT:
                 break
 
