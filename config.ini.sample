@@ -21,3 +21,7 @@ clock =
 [digitDisp]
 data =
 clock =
+
+# pin soundSensor
+[soundSensor]
+out =
