@@ -43,12 +43,17 @@ class Lcd:
 class DigitDisp:
     data:int = None
     clock:int = None
+    
+class SoundSensor:
+    out:int = None
 
 class Config:
     device:Device = None
     button:Button = None
     lcd:Lcd = None
     digitDisp:DigitDisp = None
+    soundSensor:SoundSensor = None
+    
 
 _config = Config()
 _isInit = False
@@ -78,6 +83,9 @@ def init():
     _config.digitDisp = DigitDisp()
     _config.digitDisp.data = int(configIni['digitDisp']['data']) if configIni['digitDisp']['data'] != "" else None
     _config.digitDisp.clock = int(configIni['digitDisp']['clock']) if configIni['digitDisp']['clock'] != "" else None
+    
+    _config.soundSensor = SoundSensor()
+    _config.soundSensor.out = int(configIni['soundSensor']['out']) if configIni['soundSensor']['out'] != "" else None
 
 def configRead(path : str) -> dict:
     # configparser not working in micropython :(

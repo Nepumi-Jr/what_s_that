@@ -1,5 +1,6 @@
 from src.service import time_counter, button, oled_lcd, oled_nevigate
 from src.service.oled_lcd import TextAlign
+from src.service.sound_trigger import soundTrigger
 from src import game_settings
 from src.util import log
 from src.service import art_set as art
@@ -42,7 +43,6 @@ def syncing():
     return translator_sync.main()
     
 def translator_main_game():
-    print("มาล้าว")
     symbol = 0
     cur_round = game_service.cur_round
     oled_lcd.clear()
@@ -53,42 +53,21 @@ def translator_main_game():
     oled_lcd.text(f"Rd. {cur_round + 1}/{game_service.n_round}", 0, 0, TextAlign.LEFT)
     oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
     oled_lcd.text("<", 0, 25,TextAlign.LEFT)
-    'แก้เป็น Code array'
-    oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
-    '''แก้เป๋นรูป[symbol]'''
-    c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
-    oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 10, c.width, c.height -10, True)
+    drawScreen(cur_round, symbol)
     oled_lcd.text(">", 128, 25,TextAlign.RIGHT)
     oled_lcd.show()
     pTime = time_ns()
     while True:
         if(button.is_first_press(0)):
             symbol = max(symbol-1, 0)
-            oled_lcd.delRect(10, 10, 58, c.height -10)
-            oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
-            oled_lcd.delRect(58, 10, c.width, c.height -10)
-            '''แก้เป๋นรูป[symbol]'''
-            c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
-            oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 0, c.width, c.height, True)
+            drawScreen(cur_round, symbol)
         if(button.is_first_press(1)):
             cur_round = (cur_round + 1) % game_service.n_round
-            oled_lcd.delRect(10, 10, 58, c.height -10)
-            oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
-            oled_lcd.delRect(58, 10, c.width, c.height -10)
-            '''แก้เป๋นรูป[symbol]'''
-            c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
-            oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 0, c.width, c.height, True)
+            drawScreen(cur_round, symbol)
         if(button.is_first_press(2)):
             symbol = min(symbol+1, len(game_service.fake_code_symbol[cur_round]) -1)
-            oled_lcd.delRect(10, 10, 58, c.height -10)
-            oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
-            oled_lcd.delRect(58, 10, c.width, c.height -10)
-            '''แก้เป๋นรูป[symbol]'''
-            c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
-            oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 0, c.width, c.height, True)
-        oled_lcd.delRect(0, 10, 57, 20)
-        oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
-        oled_lcd.show()
+            drawScreen(cur_round, symbol)
+        soundTrigger(False)
         button.clock_tick(1 / FRAME_RATE)
         cTime = time_ns()
         dTime = cTime - pTime
@@ -105,4 +84,13 @@ def result():
     oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.CORRECT)
     oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.CORRECT)
         
-
+def drawScreen(cur_round : int, symbol : int):
+    oled_lcd.delRect(10, 10, 58, c.height -10)
+    oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
+    oled_lcd.delRect(58, 10, c.width, c.height -10)
+    '''แก้เป๋นรูป[symbol]'''
+    c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
+    oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 0, c.width, c.height, True)
+    oled_lcd.delRect(0, 10, 57, 20)
+    oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
+    oled_lcd.show()
