@@ -67,22 +67,23 @@ def translator_main_game():
         if(button.is_first_press(2)):
             symbol = min(symbol+1, len(game_service.fake_code_symbol[cur_round]) -1)
             drawScreen(cur_round, symbol)
-        soundTrigger(False)
         button.clock_tick(1 / FRAME_RATE)
         cTime = time_ns()
         dTime = cTime - pTime
         pTime = cTime
         sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
-    
-    '''หมดเวลา / observer เสร็จ (รอรับผ่าน uart)'''
-    return scene.TRANSLATOR_RESULT
+        if (translator_sync.translatorSyncEnding()):
+            return scene.TRANSLATOR_RESULT
 
 def result():
     oled_lcd.clear()
     oled_nevigate.reset()
-    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.CORRECT)
-    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.CORRECT)
-    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.CORRECT)
+    oled_lcd.text("normal",64, 30,TextAlign.CENTER)
+    oled_lcd.text("5:00", 64, 40,TextAlign.CENTER)
+    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.CONFIRM)
+    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.CONFIRM)
+    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.CONFIRM)
+    sleep(3)
         
 def drawScreen(cur_round : int, symbol : int):
     oled_lcd.delRect(10, 10, 58, c.height -10)
@@ -94,3 +95,4 @@ def drawScreen(cur_round : int, symbol : int):
     oled_lcd.delRect(0, 10, 57, 20)
     oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
     oled_lcd.show()
+result()

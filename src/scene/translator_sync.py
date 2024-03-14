@@ -26,12 +26,18 @@ def pressAnyToReturn():
     while True:
         for i in range(button.get_button_number()):
             if button.is_first_press(i):
-                return scene.MENU
+                return scene.TRANSLATOR_MENU
         button.clock_tick(0.03)
         sleep(0.03)
 
 TIME_FRAME = 0.1
-
+def translatorSyncEnding():
+    read_data = uart.read()
+    if read_data is not None and read_data.startswith("end"):
+        return True
+    else:
+        return False
+    
 def main():
     time_out = 10
     oled.clear(False)
@@ -45,9 +51,7 @@ def main():
     while True:
         # TODO : add timeout
         read_data = uart.read()
-        print("รอรับ")
         if read_data is not None and read_data.startswith("diff"):
-            print("รับมาละ", read_data)
             #diff {main_game_service.cur_diff} seed {ob_seed}
             diff = read_data.split(" ")[1].strip()
             recv_seed = int(read_data.split(" ")[3].strip())
@@ -75,17 +79,13 @@ def main():
     
     hashed = main_game_service.get_hash_cur_game_setting()
     uart.send(f"hash {hashed}")
-    print(hashed)
     showStatusText(f"Syncing...")
-    print("ส่งละ")
     while True:
         read_data = uart.read()
         if read_data is not None and read_data.startswith("mann"):
             uart.send(f"starto")
-            print("รับละไปละ")
             return scene.TRANSLATOR_MAIN_GAME
         elif read_data is not None and read_data.startswith("not mann"):
-            print("ไม่รับ")
             pressAnyToReturn()
             return scene.TRANSLATOR_MENU
         sleep(TIME_FRAME)
