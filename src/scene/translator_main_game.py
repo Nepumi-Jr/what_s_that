@@ -95,4 +95,6 @@ def drawScreen(cur_round : int, symbol : int):
     oled_lcd.delRect(0, 10, 57, 20)
     oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
     oled_lcd.show()
-result()
+
+if __name__ == "__main__":
+    result()

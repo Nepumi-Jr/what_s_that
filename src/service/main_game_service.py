@@ -243,6 +243,18 @@ def get_hash_cur_game_setting():
     
     return hh
 
+def print_cur_game_status():
+    print(f"n_round : {n_round}")
+    print(f"cur_diff : {cur_diff}")
+    for r in range(n_round):
+        print(f"Round {r+1}")
+        print("Real :", real_code_symbol[r])
+        for f in fake_code_symbol[r]:
+            print("fake :", f)
+        print()
+    print(f"wrong_penalty : {wrong_penalty}")
+    print(f"time_limit : {time_limit}")
+
 if __name__ == "__main__":
     reset_easy()
     for r in range(n_round):

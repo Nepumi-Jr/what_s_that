@@ -20,10 +20,10 @@ easy_symbols = {
 
 hard_symbols = {
     "pushing_boulder" : Symbol("pushing_boulder", pushing_boulder.n_type, pushing_boulder.get), #! remove this later
-    "cat" : Symbol("cat", cato_hard.n_type, cato_hard.get),
-    "flower" : Symbol("flower", flower_hard.n_type, flower_hard.get),
+    "cat_hard" : Symbol("cat_hard", cato_hard.n_type, cato_hard.get),
+    "flower_hard" : Symbol("flower_hard", flower_hard.n_type, flower_hard.get),
     "16-seg" : Symbol("16-Seg", sixteen_segment.n_type, sixteen_segment.get)
-}
+} #! ชื่อใน dict (ทั้ง easy และ hard) ต้องไม่ซ้ำกัน
 
 def getRandomCanvas() -> Canvas:
     """เอาไว้ทดสอบ เฉย ๆ"""
