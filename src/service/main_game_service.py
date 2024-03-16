@@ -16,6 +16,7 @@ fake_code_symbol = [] # list of list of CodeAndSymbol
 
 # game setting
 wrong_penalty = 5.0 # in second
+sound_penalty = 120.0 # in second
 
 class OnSubmitStatus:
     CORRECT = 0
@@ -56,6 +57,12 @@ class CodeAndSymbol:
     def __hash__(self) -> int:
         return hash((self.code, self.name, self.type))
 
+def on_sound_penalty(pass_code : int, time_use: float):
+    global save_cur_time, save_pass_code
+
+    save_cur_time = time_use
+    save_pass_code = pass_code
+    save_cur_time += sound_penalty
 
 def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
     global cur_round, save_cur_time, save_pass_code
@@ -74,9 +81,12 @@ def on_submit_pass(pass_code : int, time_use: float) -> OnSubmitStatus:
         return OnSubmitStatus.WRONG
 
 def set_seed(seed : int = -1):
+    global cur_seed
+
     if seed == -1:
         seed = random.randint(0, 999999999)
     random.seed(seed)
+    cur_seed = seed
     return seed
 
 def _reset_inner_data():
@@ -88,6 +98,37 @@ def _reset_inner_data():
     real_code_symbol.clear()
     fake_code_symbol.clear()
 
+def _reset_silent():
+    global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit
+
+    n_round = 2
+    wrong_penalty = 60 * 2.0 # 2 minute
+    time_limit = 60 * 10.0 * n_round # 10 minute per round
+
+    #* generate symbol
+    #? for easy
+    #? 2 round
+    #? set of symbol : Very easy, easy
+    #? fake symbol : use 3 symbol within 2 set of symbol (6 symbol) for each round
+    #TODO : Very easy symbol
+    for r_ind in range(n_round):
+        symbols_set = list(art.easy_symbols.keys())
+        urandom.shuffle(symbols_set)
+
+        real_set = symbols_set.pop()
+        fake_set = symbols_set.pop()
+
+        allCodes = urandom.sample_int(0, 9999, 10)
+
+        real_type_set = urandom.sample_int(0, art.easy_symbols[real_set].n_type-1, 3)
+        real_code_symbol.append(CodeAndSymbol(allCodes[0], real_set, real_type_set[0]))
+
+        fake_type_set =  urandom.sample_int(0, art.easy_symbols[fake_set].n_type-1, 3)
+        fake_code_symbol_mix = [CodeAndSymbol(allCodes[0], real_set, real_type_set[0])]
+        fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[1 + i], fake_set, fake_type_set[i]) for i in range(3)])
+        fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[3 + i], real_set, real_type_set[i]) for i in range(1, 3)])
+        urandom.shuffle(fake_code_symbol_mix)
+        fake_code_symbol.append(fake_code_symbol_mix)
 
 
 def _reset_easy():
@@ -111,10 +152,10 @@ def _reset_easy():
 
         allCodes = urandom.sample_int(0, 9999, 10)
 
-        real_type_set = urandom.sample_int(0, art.easy_symbols[real_set].n_type, 3)
+        real_type_set = urandom.sample_int(0, art.easy_symbols[real_set].n_type-1, 3)
         real_code_symbol.append(CodeAndSymbol(allCodes[0], real_set, real_type_set[0]))
 
-        fake_type_set =  urandom.sample_int(0, art.easy_symbols[fake_set].n_type, 3)
+        fake_type_set =  urandom.sample_int(0, art.easy_symbols[fake_set].n_type-1, 3)
         fake_code_symbol_mix = [CodeAndSymbol(allCodes[0], real_set, real_type_set[0])]
         fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[1 + i], fake_set, fake_type_set[i]) for i in range(3)])
         fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[3 + i], real_set, real_type_set[i]) for i in range(1, 3)])
@@ -145,13 +186,13 @@ def _reset_normal():
 
         allCodes = urandom.sample_int(0, 9999, 12)
 
-        real_type_set = urandom.sample_int(0, art.easy_symbols[real_set].n_type, 3)
+        real_type_set = urandom.sample_int(0, art.easy_symbols[real_set].n_type-1, 3)
         real_code_symbol.append(CodeAndSymbol(allCodes[-1], real_set, real_type_set[0]))
         
         fake_code_symbol_mix = []
         fake_code_symbol_mix.extend([CodeAndSymbol(allCodes.pop(), real_set, real_type_set[i]) for i in range(0, 3)])
         for fake_set in fake_sets:
-            fake_type_set =  urandom.sample_int(0, art.easy_symbols[fake_set].n_type, 3)
+            fake_type_set =  urandom.sample_int(0, art.easy_symbols[fake_set].n_type-1, 3)
             fake_code_symbol_mix.extend([CodeAndSymbol(allCodes.pop(), fake_set, fake_type_set[i]) for i in range(3)])
             
         urandom.shuffle(fake_code_symbol_mix)
@@ -166,13 +207,13 @@ def _reset_normal():
 
         allCodes = urandom.sample_int(0, 9999, 12)
 
-        real_type_set = urandom.sample_int(0, art.hard_symbols[real_set].n_type, 3)
+        real_type_set = urandom.sample_int(0, art.hard_symbols[real_set].n_type-1, 3)
         real_code_symbol.append(CodeAndSymbol(allCodes[-1], real_set, real_type_set[0]))
         
         fake_code_symbol_mix = []
         fake_code_symbol_mix.extend([CodeAndSymbol(allCodes.pop(), real_set, real_type_set[i]) for i in range(0, 3)])
         for fake_set in fake_sets:
-            fake_type_set =  urandom.sample_int(0, art.hard_symbols[fake_set].n_type, 3)
+            fake_type_set =  urandom.sample_int(0, art.hard_symbols[fake_set].n_type-1, 3)
             fake_code_symbol_mix.extend([CodeAndSymbol(allCodes.pop(), fake_set, fake_type_set[i]) for i in range(3)])
             
         urandom.shuffle(fake_code_symbol_mix)
@@ -199,13 +240,13 @@ def _reset_hard():
 
         allCodes = urandom.sample_int(0, 9999, 15)
 
-        real_type_set = urandom.sample_int(0, art.hard_symbols[real_set].n_type, 5)
+        real_type_set = urandom.sample_int(0, art.hard_symbols[real_set].n_type-1, 5)
         real_code_symbol.append(CodeAndSymbol(allCodes[-1], real_set, real_type_set[0]))
         
         fake_code_symbol_mix = []
         fake_code_symbol_mix.extend([CodeAndSymbol(allCodes.pop(), real_set, real_type_set[i]) for i in range(0, 5)])
         for fake_set in fake_sets:
-            fake_type_set =  urandom.sample_int(0, art.hard_symbols[fake_set].n_type, 2)
+            fake_type_set =  urandom.sample_int(0, art.hard_symbols[fake_set].n_type-1, 2)
             fake_code_symbol_mix.extend([CodeAndSymbol(allCodes.pop(), fake_set, fake_type_set[i]) for i in range(2)])
             
         urandom.shuffle(fake_code_symbol_mix)
@@ -222,6 +263,8 @@ def reset_game():
         _reset_normal()
     elif cur_diff == Difficulty.HARD:
         _reset_hard()
+    elif cur_diff == Difficulty.SILENT:
+        _reset_silent()
     else:
         print("WARNING : Difficulty not set")
         cur_diff = Difficulty.EASY
@@ -244,6 +287,7 @@ def get_hash_cur_game_setting():
     return hh
 
 def print_cur_game_status():
+    print(f"seed : {cur_seed}")
     print(f"n_round : {n_round}")
     print(f"cur_diff : {cur_diff}")
     for r in range(n_round):
@@ -263,3 +307,4 @@ if __name__ == "__main__":
         for f in fake_code_symbol[r]:
             print("fake :", f)
         print()
+

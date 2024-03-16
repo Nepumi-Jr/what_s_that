@@ -24,4 +24,5 @@ clock =
 
 # pin soundSensor
 [soundSensor]
+is_analog = 
 out =

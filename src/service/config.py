@@ -46,6 +46,7 @@ class DigitDisp:
     
 class SoundSensor:
     out:int = None
+    is_analog:bool = False
 
 class Config:
     device:Device = None
@@ -86,6 +87,7 @@ def init():
     
     _config.soundSensor = SoundSensor()
     _config.soundSensor.out = int(configIni['soundSensor']['out']) if configIni['soundSensor']['out'] != "" else None
+    _config.soundSensor.is_analog = configIni['soundSensor']['is_analog'].lower() == "true"
 
 def configRead(path : str) -> dict:
     # configparser not working in micropython :(

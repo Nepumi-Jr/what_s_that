@@ -5,6 +5,7 @@ class SCENE:
     SYNC = 2
     DIFFICULTY_SELECT = 11
     SCORE_BOARD = 12
+    LOUD = 14
 
     CORRECT = 3
     WRONG = 4

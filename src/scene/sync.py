@@ -45,6 +45,7 @@ def main():
     showStatusText(f"Drawing symbol.")
     ob_seed = main_game_service.set_seed()
     main_game_service.reset_game()
+    main_game_service.print_cur_game_status()
 
     if get_config().device.skip_sync:
         showStatusText(f"Press any...")

@@ -25,6 +25,8 @@ def main():
                 cur_scene = main_game.on_correct()
             elif cur_scene == SCENE.WRONG:
                 cur_scene = main_game.on_wrong()
+            elif cur_scene == SCENE.LOUD:
+                cur_scene = main_game.on_loud()
             elif cur_scene == SCENE.WIN:
                 cur_scene = main_game.on_win()
             elif cur_scene == SCENE.TIME_UP:
