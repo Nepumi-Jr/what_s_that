@@ -4,7 +4,7 @@ from src.service.config import get_config
 from machine import Pin
 
 config = get_config()
-tm = tm1637.TM1637(clk=Pin(get_config().lcd.clock), dio=Pin(get_config().lcd.data))
+tm = tm1637.TM1637(clk=Pin(get_config().digitDisp.clock), dio=Pin(get_config().digitDisp.data))
 
 
 def on_display(second_remaining : float, force_colon = False):
