@@ -128,3 +128,7 @@ def extractType4(type, n_type1, n_type2, n_type3, n_type4):
 def extractType5(type, n_type1, n_type2, n_type3, n_type4, n_type5):
     """ถอด type ออกมาเป็น 5 ตัว (type จาก 0 ถึง n_type - 1)"""
     return (type % n_type1, (type // n_type1) % n_type2, (type // (n_type1 * n_type2)) % n_type3, (type // (n_type1 * n_type2 * n_type3)) % n_type4, type // (n_type1 * n_type2 * n_type3 * n_type4))
+
+def extractType6(type, n_type1, n_type2, n_type3, n_type4, n_type5, n_type6):
+    """ถอด type ออกมาเป็น 6 ตัว (type จาก 0 ถึง n_type - 1)"""
+    return (type % n_type1, (type // n_type1) % n_type2, (type // (n_type1 * n_type2)) % n_type3, (type // (n_type1 * n_type2 * n_type3)) % n_type4, (type // (n_type1 * n_type2 * n_type3 * n_type4)) % n_type5, type // (n_type1 * n_type2 * n_type3 * n_type4 * n_type5))

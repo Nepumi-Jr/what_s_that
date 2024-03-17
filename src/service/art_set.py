@@ -1,5 +1,5 @@
 # import art here
-from src.service.arts import pushing_boulder, flower, eight_segment, flower_hard, sixteen_segment, cato, cato_hard, arrow
+from src.service.arts import pushing_boulder, flower, flower_hard4, flower_hard5, flower_hard6, eight_segment, sixteen_segment, cato, cato_hard, arrow, three_alpha
 from src.service.art_canvas import Canvas
 from random import randint, choice
 
@@ -19,9 +19,10 @@ easy_symbols = {
 }
 
 hard_symbols = {
-    "pushing_boulder" : Symbol("pushing_boulder", pushing_boulder.n_type, pushing_boulder.get), #! remove this later
     "cat_hard" : Symbol("cat_hard", cato_hard.n_type, cato_hard.get),
-    "flower_hard" : Symbol("flower_hard", flower_hard.n_type, flower_hard.get),
+    "flower_hard4" : Symbol("flower_hard4", flower_hard4.n_type, flower_hard4.get),
+    "flower_hard5" : Symbol("flower_hard5", flower_hard5.n_type, flower_hard5.get),
+    "flower_hard6" : Symbol("flower_hard6", flower_hard6.n_type, flower_hard6.get),
     "16-seg" : Symbol("16-Seg", sixteen_segment.n_type, sixteen_segment.get)
 } #! ชื่อใน dict (ทั้ง easy และ hard) ต้องไม่ซ้ำกัน
 
