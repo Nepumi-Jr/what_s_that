@@ -86,12 +86,11 @@ def result():
         
 def drawScreen(cur_round : int, symbol : int):
     c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
-    oled_lcd.delRect(10, 10, 58, c.height -10)
+    oled_lcd.delRect(0, 0, c.width, c.height -10)
+    oled_lcd.text(f"Rd. {cur_round + 1}/{game_service.n_round}", 0, 0, TextAlign.LEFT)
     oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
-    oled_lcd.delRect(58, 10, c.width, c.height -10)
     '''แก้เป๋นรูป[symbol]'''
     oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 0, c.width, c.height, True)
-    oled_lcd.delRect(0, 10, 57, 20)
     oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
     oled_lcd.show()
 
