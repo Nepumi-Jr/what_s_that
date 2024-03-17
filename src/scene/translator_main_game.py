@@ -64,6 +64,7 @@ def translator_main_game():
             drawScreen(cur_round, symbol)
         if(button.is_first_press(1)):
             cur_round = (cur_round + 1) % game_service.n_round
+            symbol = 0
             drawScreen(cur_round, symbol)
         if(button.is_first_press(2)):
             symbol = min(symbol+1, len(game_service.fake_code_symbol[cur_round]) -1)
@@ -111,7 +112,7 @@ def on_time_up():
     oled_nevigate.setAllButtonIcon(oled_nevigate.Icon.CONFIRM)
     four_digit_disp.on_display(game_service.save_cur_time, True)
     while True:
-        if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
+        if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2):
             return scene.TRANSLATOR_MENU
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
@@ -137,8 +138,9 @@ def on_win():
 
     four_digit_disp.on_display(game_service.save_cur_time, True)
     while True:
-        if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
+        if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2):
             return scene.TRANSLATOR_MENU
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
+
 
