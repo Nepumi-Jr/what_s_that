@@ -9,6 +9,9 @@ class Symbol:
         self.n_type = n_type
         self.getCanvasFromType = getCanvasFromType
 
+silent_symbols = {
+    "three_alpha" : Symbol("three_alpha", three_alpha.n_type, three_alpha.get)
+}
 
 easy_symbols = {
     "arrow" : Symbol("arrow", arrow.n_type, arrow.get),
