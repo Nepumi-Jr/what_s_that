@@ -54,7 +54,7 @@ def textInLine(textStr, x, lineNumber, align : TextAlign = TextAlign.LEFT, reloa
     text(textStr, x, lineNumber * 10, align, reload)
 
 def clear(reload = True):
-    oled.delRect(0, 0, oled.width() - 1, oled.height() - 11)
+    oled.delRect(0, 0, oled.width(), oled.height() - 11)
     if reload:
         show()
 

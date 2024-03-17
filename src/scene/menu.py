@@ -134,3 +134,31 @@ def score_board():
         dTime = cTime - pTime
         pTime = cTime
         sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
+
+def score_board_gameplay():
+    oled_lcd.clear()
+    oled_nevigate.reset()
+    oled_nevigate.setAllButtonIcon(oled_nevigate.Icon.CONFIRM)
+
+    oled_lcd.textInLine("Scoreboard", oled_lcd.CenterX(), 0, TextAlign.CENTER)
+    diff = game_service.cur_diff
+    oled_lcd.textInLine(f"={diff}=", oled_lcd.CenterX(), 1, TextAlign.CENTER)
+    record = score_service.get_score_board_data(diff)
+    for  i , (name, time_use) in enumerate(record):
+        time_min = time_use // 60
+        time_sec = time_use % 60
+        oled_lcd.textInLine(f"{time_min:02}:{time_sec:02}", oled_lcd.width() - 1, 2 + i, TextAlign.RIGHT)
+        oled_lcd.text(name, 0, (2 + i) * 10)
+    oled_lcd.show()
+
+    pTime = time_ns()
+    while True:
+        if(button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3)):
+            return scene.GAME_OVER
+        
+        button.clock_tick(1 / FRAME_RATE)
+        cTime = time_ns()
+        dTime = cTime - pTime
+        pTime = cTime
+        sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
+

@@ -209,7 +209,7 @@ def on_time_up():
     four_digit_disp.on_display(game_service.save_cur_time, True)
     while True:
         if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
-            return scene.MENU
+            return scene.GAME_OVER
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
 
@@ -237,7 +237,7 @@ def on_win():
         if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
             if score_board.is_new_record(game_service.cur_diff, game_service.save_cur_time):
                 return scene.NEW_RECORD
-            return scene.MENU
+            return scene.GAME_OVER
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
 
@@ -298,8 +298,7 @@ def new_record():
                 if team_name == "":
                     team_name = "NONAM"
                 score_board.add_new_record(game_service.cur_diff, team_name, int(game_service.save_cur_time))
-                #TODO : Return to score board...
-                return scene.MENU
+                return scene.SCORE_BOARD_GAME
             cur_pos_ind = min(cur_pos_ind + 1, 4)
             update_team_name()
         button.clock_tick(1/FRAME_RATE)

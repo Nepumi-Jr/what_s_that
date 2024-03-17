@@ -1,4 +1,4 @@
-from src.scene import main_game, sync, menu
+from src.scene import main_game, sync, menu, game_over
 from src.scene import translator_main_game as translate_scene
 from src.service.scene import SCENE
 from src.service import config
@@ -33,6 +33,10 @@ def main():
                 cur_scene = main_game.on_time_up()
             elif cur_scene == SCENE.NEW_RECORD:
                 cur_scene = main_game.new_record()
+            elif cur_scene == SCENE.GAME_OVER:
+                cur_scene = game_over.main()
+            elif cur_scene == SCENE.SCORE_BOARD_GAME:
+                cur_scene = menu.score_board_gameplay()
             elif cur_scene == SCENE.EXIT:
                 break
 

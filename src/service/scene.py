@@ -6,6 +6,8 @@ class SCENE:
     DIFFICULTY_SELECT = 11
     SCORE_BOARD = 12
     LOUD = 14
+    GAME_OVER = 101
+    SCORE_BOARD_GAME = 102
 
     CORRECT = 3
     WRONG = 4
