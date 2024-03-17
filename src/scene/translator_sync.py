@@ -1,7 +1,8 @@
 from src.service import oled_lcd as oled
 from src.service.oled_lcd import TextAlign
 from src.service import oled_nevigate as oled_nav
-from src.service import uart, config, button, main_game_service
+from src.service import uart, config, button
+from src.service import main_game_service as game_service
 from src.service.scene import SCENE as scene
 
 

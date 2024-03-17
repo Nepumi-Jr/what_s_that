@@ -8,6 +8,7 @@ from time import sleep, time_ns
 from src.service.scene import SCENE as scene
 from src.scene import translator_sync
 from src.service import main_game_service as game_service
+from src.hardware import four_digit_disp
 
 FRAME_RATE = 15
 
@@ -79,16 +80,16 @@ def result():
     oled_lcd.clear()
     oled_nevigate.reset()
     if(game_service.time_limit > game_service.save_cur_time):
-        on_win()
+        return on_win()
     else:
-        on_time_up()
+        return on_time_up()
         
 def drawScreen(cur_round : int, symbol : int):
+    c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
     oled_lcd.delRect(10, 10, 58, c.height -10)
     oled_lcd.text(f"{game_service.fake_code_symbol[cur_round][symbol].code:04d}", 16, 30,TextAlign.LEFT)
     oled_lcd.delRect(58, 10, c.width, c.height -10)
     '''แก้เป๋นรูป[symbol]'''
-    c = game_service.get_canvas_from_CodeAndSymbol(game_service.fake_code_symbol[cur_round][symbol])
     oled_lcd.insertPixelImage(c.convert_to_int32_array(), 58, 0, c.width, c.height, True)
     oled_lcd.delRect(0, 10, 57, 20)
     oled_lcd.text(f"Pic #{symbol + 1}", 0, 10)
@@ -112,7 +113,7 @@ def on_time_up():
     four_digit_disp.on_display(game_service.save_cur_time, True)
     while True:
         if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
-            return scene.TRANSLATOR_MANU
+            return scene.TRANSLATOR_MENU
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
 
@@ -138,7 +139,7 @@ def on_win():
     four_digit_disp.on_display(game_service.save_cur_time, True)
     while True:
         if button.is_first_press(0) or button.is_first_press(1) or button.is_first_press(2) or button.is_first_press(3):
-            return scene.TRANSLATOR_MANU
+            return scene.TRANSLATOR_MENU
         button.clock_tick(1/FRAME_RATE)
         sleep(1/FRAME_RATE)
 
