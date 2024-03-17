@@ -57,10 +57,10 @@ def main():
             #diff {main_game_service.cur_diff} seed {ob_seed}
             diff = read_data.split(" ")[1].strip()
             recv_seed = int(read_data.split(" ")[3].strip())
-            main_game_service.set_seed(recv_seed)
+            game_service.set_seed(recv_seed)
             #split DIFF
-            main_game_service.set_diff_from_str(diff)
-            main_game_service.reset_game()
+            game_service.set_diff_from_str(diff)
+            game_service.reset_game()
             break
 
         if time_out < 0:
@@ -72,14 +72,14 @@ def main():
         else:
             time_out -= TIME_FRAME
         
-        if button.is_hold(0) or button.is_hold(1) or button.is_hold(2) or button.is_hold(3):
+        if button.is_hold(0) or button.is_hold(1) or button.is_hold(2):
             return scene.TRANSLATOR_MENU
 
         button.clock_tick(TIME_FRAME)
 
         sleep(TIME_FRAME)
     
-    hashed = main_game_service.get_hash_cur_game_setting()
+    hashed = game_service.get_hash_cur_game_setting()
     uart.send(f"hash {hashed}")
     showStatusText(f"Syncing...")
     while True:
