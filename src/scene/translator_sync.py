@@ -34,6 +34,7 @@ TIME_FRAME = 0.1
 def translatorSyncEnding():
     read_data = uart.read()
     if read_data is not None and read_data.startswith("end"):
+        game_service.save_cur_time = read_data.split(" ")[1].strip()
         return True
     else:
         return False
