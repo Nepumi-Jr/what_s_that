@@ -35,6 +35,7 @@ def main():
     time_out = 10
     time_re_seed = 0
     is_text_changed = False
+    time_send = 0
 
     oled.clear(False)
     oled.insertPixelImage(connectingPixel, 0, 0, 128, 40, True)
@@ -57,7 +58,9 @@ def main():
         read_data = uart.read()
         if read_data is not None and read_data.startswith("hash"):
             recv_hash = read_data.split(" ")[1].strip()
-            if recv_hash == str(hash(ob_seed)):
+            main_hash = main_game_service.get_hash_cur_game_setting()
+            print("Received hash", recv_hash, "expected", main_hash)
+            if recv_hash == str(main_hash):
                 showStatusText(f"Seed matched.")
                 break
             else:
@@ -78,6 +81,8 @@ def main():
         time_re_seed -= TIME_FRAME
         if time_re_seed < 0:
             uart.send(f"diff {main_game_service.cur_diff} seed {ob_seed}")
+            print("sending seed and diff", time_send, "time...")
+            time_send += 1
             time_re_seed = 1
         
         if button.is_hold(0) or button.is_hold(1) or button.is_hold(2) or button.is_hold(3):

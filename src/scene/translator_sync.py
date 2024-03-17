@@ -35,7 +35,7 @@ TIME_FRAME = 0.1
 def translatorSyncEnding():
     read_data = uart.read()
     if read_data is not None and read_data.startswith("end"):
-        game_service.save_cur_time = read_data.split(" ")[1].strip()
+        game_service.save_cur_time = float(read_data.split(" ")[1].strip())
         return True
     else:
         return False
@@ -43,7 +43,7 @@ def translatorSyncEnding():
 def main():
     time_out = 10
     is_text_changed = False
-    
+
     oled.clear(False)
     oled.insertPixelImage(connectingPixel, 0, 0, 128, 40, True)
     oled_nav.reset()
