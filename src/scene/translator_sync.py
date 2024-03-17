@@ -42,6 +42,8 @@ def translatorSyncEnding():
     
 def main():
     time_out = 10
+    is_text_changed = False
+    
     oled.clear(False)
     oled.insertPixelImage(connectingPixel, 0, 0, 128, 40, True)
     oled_nav.reset()
