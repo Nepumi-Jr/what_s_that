@@ -99,10 +99,11 @@ def _reset_inner_data():
     fake_code_symbol.clear()
 
 def _reset_silent():
-    global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit
+    global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit, sound_penalty
 
     n_round = 2
-    wrong_penalty = 60 * 2.0 # 2 minute
+    wrong_penalty = 60 * 3.0 # 3 minute
+    sound_penalty = 60 * 10.0 # 10 minute iff mic is perfect else 3 minute
     time_limit = 60 * 10.0 * n_round # 10 minute per round
 
     #* generate symbol
@@ -169,8 +170,8 @@ def _reset_normal():
     e_n_round = 2
     h_n_round = 1
     n_round = e_n_round + h_n_round
-    wrong_penalty = 60 * 3.0 # 3 minute
-    time_limit = 60 * 15.0 * n_round # 15 minute per round
+    wrong_penalty = 60 * 5.0 # 5 minute
+    time_limit = 60 * 20.0
 
     #* generate symbol
     #? for normal
@@ -223,8 +224,8 @@ def _reset_hard():
     global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit
 
     n_round = 3
-    wrong_penalty = 60 * 4.0 # 4 minute
-    time_limit = 60 * 15.0 * n_round # 15 minute per round
+    wrong_penalty = 60 * 10.0 # 10 minute
+    time_limit = 60 * 20.0 # 20 minute
 
     #* generate symbol
     #? for hard
