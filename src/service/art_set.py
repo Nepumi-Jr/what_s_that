@@ -1,5 +1,6 @@
 # import art here
-from src.service.arts import pushing_boulder, flower, flower_hard4, flower_hard5, flower_hard6, eight_segment, sixteen_segment, cato, cato_hard, arrow, three_alpha
+from src.service.arts import pushing_boulder, flower, flower_hard4, flower_hard5, flower_hard6, eight_segment, cato, cato_hard, arrow, three_alpha
+from src.service.arts import sixteen_segment4, sixteen_segment5, sixteen_segment6, sixteen_segment7
 from src.service.art_canvas import Canvas
 from random import randint, choice
 
@@ -26,7 +27,10 @@ hard_symbols = {
     "flower_hard4" : Symbol("flower_hard4", flower_hard4.n_type, flower_hard4.get),
     "flower_hard5" : Symbol("flower_hard5", flower_hard5.n_type, flower_hard5.get),
     "flower_hard6" : Symbol("flower_hard6", flower_hard6.n_type, flower_hard6.get),
-    "16-seg" : Symbol("16-Seg", sixteen_segment.n_type, sixteen_segment.get)
+    "16-seg4" : Symbol("16-Seg4", sixteen_segment4.n_type, sixteen_segment4.get),
+    "16-seg5" : Symbol("16-Seg5", sixteen_segment5.n_type, sixteen_segment5.get),
+    "16-seg6" : Symbol("16-Seg6", sixteen_segment6.n_type, sixteen_segment6.get),
+    "16-seg7" : Symbol("16-Seg7", sixteen_segment7.n_type, sixteen_segment7.get)
 } #! ชื่อใน dict (ทั้ง easy และ hard) ต้องไม่ซ้ำกัน
 
 def getRandomCanvas() -> Canvas:

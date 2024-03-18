@@ -1,13 +1,13 @@
 from src.service.art_canvas import Canvas, extractType2
 from src.util import permutation
 
-n_type = 5 * 4000
+n_type = 4000
 
 #* keep in mind that top left is (0, 0) and bottom right is (63, 47)
 def get(type : int) -> Canvas:
 
-    n_seg, next_p = extractType2(type, 5, 4000)
-    n_seg += 4
+    next_p = type
+    n_seg = 6
     bitList = [0 for _ in range(16)]
     for i in range(n_seg):
         bitList[i] = 1
