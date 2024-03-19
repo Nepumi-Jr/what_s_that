@@ -1,5 +1,5 @@
 # import art here
-from src.service.arts import pushing_boulder, flower, flower_hard4, flower_hard5, flower_hard6, eight_segment, cato, cato_hard, arrow, three_alpha
+from src.service.arts import pushing_boulder, flower, flower_hard4, flower_hard5, flower_hard6, eight_segment, cato, cato_hard, arrow, three_alpha, two_thai_alpha
 from src.service.arts import sixteen_segment4, sixteen_segment5, sixteen_segment6, sixteen_segment7
 from src.service.art_canvas import Canvas
 from random import randint, choice
@@ -11,7 +11,8 @@ class Symbol:
         self.getCanvasFromType = getCanvasFromType
 
 silent_symbols = {
-    "three_alpha" : Symbol("three_alpha", three_alpha.n_type, three_alpha.get)
+    "three_alpha" : Symbol("three_alpha", three_alpha.n_type, three_alpha.get),
+    "two_thai_alpha": Symbol("two_thai_alpha", two_thai_alpha.n_type, two_thai_alpha.get)
 }
 
 easy_symbols = {

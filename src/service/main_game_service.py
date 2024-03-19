@@ -101,6 +101,7 @@ def _reset_inner_data():
 def _reset_silent():
     global n_round, save_pass_code, real_code_symbol, fake_code_symbol, wrong_penalty, cur_diff, time_limit, sound_penalty
 
+    e_round, s_round = 1, 1
     n_round = 2
     wrong_penalty = 60 * 3.0 # 3 minute
     sound_penalty = 60 * 10.0 # 10 minute iff mic is perfect else 3 minute
@@ -109,10 +110,10 @@ def _reset_silent():
     #* generate symbol
     #? for easy
     #? 2 round
-    #? set of symbol : Very easy, easy
-    #? fake symbol : use 3 symbol within 2 set of symbol (6 symbol) for each round
-    #TODO : Very easy symbol
-    for r_ind in range(n_round):
+    #? set of symbol : easy, silent
+    #? fake symbol : use 3 symbol within 2 set of symbol (6 symbol) for easy
+    #? use 5 symbol in the same set for silent
+    for r_ind in range(e_round):
         symbols_set = list(art.easy_symbols.keys())
         urandom.shuffle(symbols_set)
 
@@ -130,6 +131,18 @@ def _reset_silent():
         fake_code_symbol_mix.extend([CodeAndSymbol(allCodes[3 + i], real_set, real_type_set[i]) for i in range(1, 3)])
         urandom.shuffle(fake_code_symbol_mix)
         fake_code_symbol.append(fake_code_symbol_mix)
+    
+    for r_ind in range(s_round):
+        symbols_set = list(art.silent_symbols.keys())
+        urandom.shuffle(symbols_set)
+
+        real_set = symbols_set.pop()
+
+        allCodes = urandom.sample_int(0, 9999, 7)
+
+        real_type_set = urandom.sample_int(0, art.silent_symbols[real_set].n_type-1, 5)
+        real_code_symbol.append(CodeAndSymbol(allCodes[0], real_set, real_type_set[0]))
+        fake_code_symbol.append([CodeAndSymbol(allCodes[i], real_set, real_type_set[i]) for i in range(5)])
 
 
 def _reset_easy():
@@ -276,6 +289,8 @@ def get_canvas_from_CodeAndSymbol(cas : CodeAndSymbol):
         return art.easy_symbols[cas.name].getCanvasFromType(cas.type)
     elif cas.name in art.hard_symbols:
         return art.hard_symbols[cas.name].getCanvasFromType(cas.type)
+    elif cas.name in art.silent_symbols:
+        return art.silent_symbols[cas.name].getCanvasFromType(cas.type)
     
     assert False, "Unknown symbol name : " + cas.name
 
