@@ -80,7 +80,7 @@ def main():
 
         time_re_seed -= TIME_FRAME
         if time_re_seed < 0:
-            uart.send(f"diff {main_game_service.cur_diff} seed {ob_seed}")
+            uart.send(f"diff {main_game_service.cur_diff} seed {ob_seed} ")
             print("sending seed and diff", time_send, "time...")
             time_send += 1
             time_re_seed = 1
@@ -104,3 +104,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
