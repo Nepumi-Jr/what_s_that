@@ -18,4 +18,6 @@ def on_display(second_remaining : float, force_colon = False):
         colon = False
         
     tm.numbers(minute, int(second), colon)
-    
+
+def clear():
+    tm.write(bytearray(b'\x00\x00\x00\x00'))

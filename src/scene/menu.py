@@ -13,21 +13,22 @@ title_logo = [0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000
 def main():
     oled_lcd.clear()
     oled_nevigate.reset()
-    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.UP)
-    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.DOWN)
+    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.LEFT)
+    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.RIGHT)
     oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.CONFIRM)
     oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.CONFIRM)
     
     oled_lcd.insertPixelImage(title_logo, 0, 0, 128, 30)
+    time_counter.clear()
     
     
     menu_selected_ind = 0
     def reload_choice():
-        for i, e in enumerate(["Play", "Scoreboard"]):
+        for i, e in enumerate(["Play", "Scoreboard", "Setting"]):
             if i == menu_selected_ind:
-                oled_lcd.textInLine(f"> {e} <", oled_lcd.CenterX(), 3 + i, TextAlign.CENTER)
-            else:
-                oled_lcd.textInLine(f"{e}", oled_lcd.CenterX(), 3 + i, TextAlign.CENTER)
+                oled_lcd.delRect(0, 35, 128, 35 + 10)
+                oled_lcd.text(f"< {e} >", oled_lcd.CenterX(), 35, TextAlign.CENTER)
+                break
         oled_lcd.show()
 
     reload_choice()
@@ -36,14 +37,16 @@ def main():
     while True:
 
         if(button.is_first_press(0)) or (button.is_first_press(1)):
-            menu_selected_ind = (menu_selected_ind + 1) % 2
+            menu_selected_ind = (menu_selected_ind + 1) % 3
             reload_choice()
 
         elif (button.is_first_press(2)) or (button.is_first_press(3)):
             if menu_selected_ind == 0:
                 return scene.DIFFICULTY_SELECT
-            else:
+            elif menu_selected_ind == 1:
                 return scene.SCORE_BOARD
+            elif menu_selected_ind == 2:
+                return scene.SETTING
         
         
         button.clock_tick(1 / FRAME_RATE)
@@ -162,3 +165,51 @@ def score_board_gameplay():
         pTime = cTime
         sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
 
+def setting():
+    oled_lcd.clear()
+    oled_nevigate.reset()
+    oled_nevigate.setButtonIcon(0, oled_nevigate.Icon.UP)
+    oled_nevigate.setButtonIcon(1, oled_nevigate.Icon.DOWN)
+    oled_nevigate.setButtonIcon(2, oled_nevigate.Icon.BACK)
+    oled_nevigate.setButtonIcon(3, oled_nevigate.Icon.CONFIRM)
+    
+    oled_lcd.textInLine("Setting", oled_lcd.CenterX(), 0, TextAlign.CENTER)
+
+    selected_diff = 0
+    list_setting = ["test mic", "reset sc board"]
+    def reload_choice():
+        for i, e in enumerate(list_setting):    
+            if i == selected_diff:
+                if len(e) >= 14:
+                    oled_lcd.textInLine(f">{e}<", oled_lcd.CenterX(), 2 + i, TextAlign.CENTER)
+                else:
+                    oled_lcd.textInLine(f"> {e} <", oled_lcd.CenterX(), 2 + i, TextAlign.CENTER)
+            else:
+                oled_lcd.textInLine(f"{e}", oled_lcd.CenterX(), 2 + i, TextAlign.CENTER)
+        oled_lcd.show()
+    
+    reload_choice()
+    pTime = time_ns()
+    while True:
+
+        if(button.is_first_press(0)):
+            selected_diff = (selected_diff - 1) % 4
+            reload_choice()
+        elif (button.is_first_press(1)):
+            selected_diff = (selected_diff + 1) % 4
+            reload_choice()
+        elif (button.is_first_press(2)):
+            return scene.MENU
+        elif (button.is_first_press(3)):
+            if selected_diff == 0:
+                return scene.TEST_MIC
+            else:
+                score_service.reset()
+                return scene.MENU
+        
+        
+        button.clock_tick(1 / FRAME_RATE)
+        cTime = time_ns()
+        dTime = cTime - pTime
+        pTime = cTime
+        sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))

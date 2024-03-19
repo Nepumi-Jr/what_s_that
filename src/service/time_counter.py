@@ -2,6 +2,9 @@ from src.hardware import four_digit_disp
 
 time_use = 0
 
+def clear():
+    four_digit_disp.clear()
+
 def reset(initTime:float = 0):
     global time_use
     time_use = initTime

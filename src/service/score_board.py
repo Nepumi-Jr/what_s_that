@@ -40,6 +40,33 @@ def _load():
         assert len(score_board_data[diff]) == 3, f" {diff} should have 3 records (found {len(score_board_data[diff])}"
         score_board_data[diff] = sorted(score_board_data[diff], key=lambda x: x[1])
 
+def reset():
+    global score_board_data
+    # create new
+    score_board_data = {# limit 20 min
+        Difficulty.EASY : [ 
+            ("SWIFT", 10 * 60),
+            ("BLAZE", 12 * 60),
+            ("SQUAD", 15 * 60)
+        ],
+        Difficulty.NORMAL : [
+            ("PULSE", 12 * 60),
+            ("PIXEL", 15 * 60),
+            ("FUSE", 18 * 60),
+        ],
+        Difficulty.HARD : [
+            ("FLEX", 18 * 60),
+            ("FIRE", 19 * 60),
+            ("FLASH", 20 * 60)
+        ],
+        Difficulty.SILENT : [
+            ("SILE1", 18 * 60),
+            ("SILE2", 19 * 60),
+            ("SILE3", 20 * 60)
+        ]
+    }
+    write_score_board_data()
+
 def load_or_init():
     global is_init, score_board_data
     if is_init:
@@ -56,29 +83,7 @@ def load_or_init():
         return
     
     # create new
-    score_board_data = {
-        Difficulty.EASY : [
-            ("SWIFT", 10 * 60),
-            ("BLAZE", 12 * 60),
-            ("SQUAD", 15 * 60)
-        ],
-        Difficulty.NORMAL : [
-            ("PULSE", 35 * 60),
-            ("PIXEL", 37 * 60),
-            ("FUSE", 39 * 60),
-        ],
-        Difficulty.HARD : [
-            ("FLEX", 40 * 60),
-            ("FIRE", 42 * 60),
-            ("FLASH", 45 * 60)
-        ],
-        Difficulty.SILENT : [ # TODO: change that later
-            ("SILENT", 50 * 60),
-            ("SILENT", 55 * 60),
-            ("SILENT", 60 * 60)
-        ]
-    }
-    write_score_board_data()
+    reset()
 
 def get_score_board_data(diff : Difficulty):
     load_or_init()
