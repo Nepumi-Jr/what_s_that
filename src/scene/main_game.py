@@ -90,68 +90,71 @@ def main():
 
     sound.reset_queue()
     time_counter.reset(game_service.save_cur_time)
-    pTime = time_ns()
     pSound = 0
+    max_sound = 0
+    time_sound = 9999
     while time_counter.time_use < game_service.time_limit:
-        if(button.is_first_press(0)): # up
-            if cur_ind == 4:
-                pass_code = int("".join([str(i) for i in cur_code]))
-                cur_time = time_counter.time_use
+        max_sound = max(max_sound, sound.getSoundvolume())
+        sound.reload_sound_loop()
+        if time_sound > 1 / FRAME_RATE: #? loop in FRAME_RATE
+            if(button.is_first_press(0)): # up
+                if cur_ind == 4:
+                    pass_code = int("".join([str(i) for i in cur_code]))
+                    cur_time = time_counter.time_use
 
-                result_check = game_service.on_submit_pass(pass_code, cur_time)
+                    result_check = game_service.on_submit_pass(pass_code, cur_time)
 
-                if result_check == game_service.OnSubmitStatus.CORRECT:
-                    return scene.CORRECT
-                elif result_check == game_service.OnSubmitStatus.WRONG:
-                    return scene.WRONG
+                    if result_check == game_service.OnSubmitStatus.CORRECT:
+                        return scene.CORRECT
+                    elif result_check == game_service.OnSubmitStatus.WRONG:
+                        return scene.WRONG
+                    else:
+                        return scene.WIN
                 else:
-                    return scene.WIN
-            else:
-                cur_code[cur_ind] = (cur_code[cur_ind] + 1) % 10
+                    cur_code[cur_ind] = (cur_code[cur_ind] + 1) % 10
+                    update_code()
+                
+
+            if(button.is_first_press(1)): # down
+                if cur_ind != 4:
+                    cur_code[cur_ind] = (cur_code[cur_ind] - 1) % 10
+                    update_code()
+            
+            if(button.is_first_press(2)): # left
+                cur_ind = max(cur_ind - 1, 0)
                 update_code()
             
 
-        if(button.is_first_press(1)): # down
-            if cur_ind != 4:
-                cur_code[cur_ind] = (cur_code[cur_ind] - 1) % 10
+            if(button.is_first_press(3)): # right
+                cur_ind = min(cur_ind + 1, 4)
                 update_code()
-        
-        if(button.is_first_press(2)): # left
-            cur_ind = max(cur_ind - 1, 0)
-            update_code()
-        
+            
 
-        if(button.is_first_press(3)): # right
-            cur_ind = min(cur_ind + 1, 4)
-            update_code()
-        
+            if game_service.cur_diff == game_service.Difficulty.SILENT:
+                SOUND_THR = 0.3
+                this_sound = round(min(max_sound / SOUND_THR, 1)  * 10)
+                if this_sound >= pSound:
+                    for i in range(pSound, this_sound):
+                        oled_lcd.rect(5 * i, 0, 5 * i + 3, 3)
+                else:
+                    for i in range(this_sound, pSound):
+                        oled_lcd.delRect(5 * i, 0, 5 * i + 3, 3)
+                oled_lcd.show()
+                if this_sound == 10:
+                    pass_code = int("".join([str(i) for i in cur_code]))
+                    cur_time = time_counter.time_use
+                    game_service.on_sound_penalty(pass_code, cur_time)
+                    return scene.LOUD
+                pSound = this_sound
 
-        if game_service.cur_diff == game_service.Difficulty.SILENT:
-            MAX_SOUND = 0.3
-            this_sound = round(min(sound.soundTrigger() / MAX_SOUND, 1)  * 10)
-            if this_sound >= pSound:
-                for i in range(pSound, this_sound):
-                    oled_lcd.rect(5 * i, 0, 5 * i + 3, 3)
-            else:
-                for i in range(this_sound, pSound):
-                    oled_lcd.delRect(5 * i, 0, 5 * i + 3, 3)
-            oled_lcd.show()
-            if this_sound == 10:
-                pass_code = int("".join([str(i) for i in cur_code]))
-                cur_time = time_counter.time_use
-                game_service.on_sound_penalty(pass_code, cur_time)
-                return scene.LOUD
-            pSound = this_sound
-            sound.reload_sound_loop()
-
-        
-        # decrease the time, disp and wait
-        time_counter.count_tick_time( 1 / FRAME_RATE)
-        button.clock_tick(1 / FRAME_RATE)
-        cTime = time_ns()
-        dTime = cTime - pTime
-        pTime = cTime
-        sleep(max((1 / FRAME_RATE) - (dTime / 10000000000), 0))
+            
+            # decrease the time, disp and wait
+            time_counter.count_tick_time( 1 / FRAME_RATE)
+            button.clock_tick(1 / FRAME_RATE)
+            time_sound = 0
+            max_sound = 0
+        time_sound += 0.005
+        sleep(0.005)
     
     game_service.save_cur_time = time_counter.time_use
     return scene.TIME_UP
@@ -187,7 +190,7 @@ def on_loud():
     graphic = [0x78000000, 0x0F000000, 0x00000000, 0x00000000, 0x3C000000, 0x0F000000, 0x00000000, 0x00000000, 0x0F000000, 0x1F000000, 0x00000000, 0x00000000, 0x07C00000, 0x7F000000, 0x00000000, 0x00000000, 0x01C00000, 0x76000000, 0x00000000, 0x00000000, 0x00FFFF80, 0xE60007D7, 0xE07EFFEF, 0xCFBFF380, 0x007FFFFC, 0xCE000C33, 0xC03C7863, 0xC737B380, 0x000000FF, 0xCC001C13, 0xC03C7923, 0xE2279380, 0x00800007, 0x8C001F03, 0xC03C7903, 0xF2078380, 0x00600000, 0x0E000FC3, 0xC03C7F02, 0xFA078100, 0x0E180000, 0x078007F3, 0xC03C7902, 0x7A078100, 0x0F860000, 0x83C001F3, 0xC03C7902, 0x3E078100, 0x0FF10003, 0x00E01073, 0xC23C7822, 0x3E078000, 0x0FF80004, 0x00601863, 0xC63C7867, 0x1E078380, 0x0FF80000, 0xFC7017C7, 0xFE7EFFEF, 0x8E0FC380, 0x07FC0001, 0xFC300000, 0x00000000, 0x00000000, 0x01FC0003, 0xFC380000, 0x00000000, 0x00000000, 0x007C0003, 0xFC188800, 0x00004000, 0x00080002, 0x00000001, 0xF8188800, 0x00004040, 0x00080002, 0xC0000000, 0x00188811, 0x430C48F3, 0x0C08C48A, 0x300003F0, 0x00188869, 0xA4925044, 0x92092496, 0x10007FF8, 0x00188821, 0x18826048, 0x610A14A2, 0x0C007FF8, 0x00188819, 0x1F9E5048, 0x610A14A2, 0x03003FF8, 0x00188809, 0x24225044, 0x51091492, 0x00000FF0, 0x00787879, 0xE79E4877, 0x9E0DE79E, 0x000007E0, 0x07980001, 0x00000000, 0x00000000, 0x1FC00380, 0xF8180001, 0x00000000, 0x00000000, 0xE0000300, 0x00180001, 0x00000000, 0x00000000, 0x00000300, 0x00180000, 0x00000000, 0x00000000, 0x00400300, 0xFFF80000, 0x00000000, 0x00000000, 0x0F800300, 0x00300000, 0x00000000, 0x00000000, 0x70000300, 0x40300000, 0x00000000, 0x00000000, 0x80000300, 0x3C700000, 0x00000000, 0x00000000, 0x00000FC0, 0x03E00000, 0x00000000, 0x00000000, 0x00007FF0, 0x00E00000, 0x00000000, 0x00000000, 0x0003F87C, 0x01C00000, 0x00000000, 0x00000000, 0x0E0FC01C, 0x03800000, 0x00000000, 0x00000000, 0x300E0000, 0x03000000, 0x00000000, 0x00000000, 0xC0000000, 0x07000000, 0x00000000, 0x00000000, 0x00000000, 0x0E000000, 0x00000000, 0x00000000]
     oled_lcd.clear()
     oled_lcd.insertPixelImage(graphic, 0, 5, 128, 40)
-    oled_lcd.text(f"+{int(game_service.wrong_penalty /60)} min", 48, 35, reload=True)
+    oled_lcd.text(f"+{int(game_service.sound_penalty /60)} min", 48, 35, reload=True)
     
     oled_nevigate.reset()
     oled_nevigate.setWait()

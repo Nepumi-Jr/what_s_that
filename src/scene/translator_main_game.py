@@ -1,6 +1,5 @@
 from src.service import time_counter, button, oled_lcd, oled_nevigate
 from src.service.oled_lcd import TextAlign
-from src.service.sound_trigger import soundTrigger
 from src import game_settings
 from src.util import log
 from src.service import art_set as art

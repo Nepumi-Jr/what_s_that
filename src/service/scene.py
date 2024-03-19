@@ -8,6 +8,8 @@ class SCENE:
     LOUD = 14
     GAME_OVER = 101
     SCORE_BOARD_GAME = 102
+    SETTING = 104
+    TEST_MIC = 103
 
     CORRECT = 3
     WRONG = 4

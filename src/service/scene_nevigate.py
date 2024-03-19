@@ -1,4 +1,4 @@
-from src.scene import main_game, sync, menu, game_over
+from src.scene import main_game, sync, menu, game_over, test_mic
 from src.scene import translator_main_game as translate_scene
 from src.service.scene import SCENE
 from src.service import config
@@ -37,6 +37,10 @@ def main():
                 cur_scene = game_over.main()
             elif cur_scene == SCENE.SCORE_BOARD_GAME:
                 cur_scene = menu.score_board_gameplay()
+            elif cur_scene == SCENE.SETTING:
+                cur_scene = menu.setting()
+            elif cur_scene == SCENE.TEST_MIC:
+                cur_scene = test_mic.main()
             elif cur_scene == SCENE.EXIT:
                 break
 
